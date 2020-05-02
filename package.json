@@ -10,6 +10,11 @@
     "lint:fix": "eslint \"src/**/*.{ts,js,jsx}\" --fix",
     "start": "tsc && node dist/server.js"
   },
+  "husky": {
+    "hooks": {
+        "pre-commit": "npm run lint"
+    }
+},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/roerohan/PasswordGame.git"
@@ -27,6 +32,7 @@
     "eslint": "^6.8.0",
     "eslint-config-airbnb-typescript": "^7.2.1",
     "eslint-plugin-import": "^2.20.2",
+    "husky": "^4.2.5",
     "ts-node": "^8.9.1",
     "typescript": "^3.8.3"
   },
