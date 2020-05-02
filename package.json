@@ -31,8 +31,10 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
+    "@types/mongoose": "^5.7.14",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "mongoose": "^5.9.11",
     "winston": "^3.2.1"
   }
 }
