@@ -31,7 +31,6 @@ export default new mongoose.Schema({
 });
 
 
-
 export interface GameInterface extends mongoose.Document {
     roomId: string,
     players: [PlayerInterface],
