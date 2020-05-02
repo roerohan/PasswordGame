@@ -1,11 +1,19 @@
 import express from 'express';
+import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
 
 import mainRouter from './routes/mainRouter';
 import logger from './utils/logger';
 
-const app = express();
+dotenv.config();
 
+const app = express();
 const PORT = process.env.PORT || '3000';
+
+app.use(bodyParser.urlencoded({
+    extended: true,
+}));
+app.use(bodyParser.json());
 
 app.listen(PORT, (err: Error) => {
     if (err) throw err;
