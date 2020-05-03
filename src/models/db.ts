@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import logger from '../utils/logger';
 
 mongoose.Promise = global.Promise;
 
@@ -8,7 +9,7 @@ const passwordDB = mongoose.createConnection(`${process.env.MONGO_URL}/${process
 });
 
 passwordDB.once('open', () => {
-    console.log('Connected to Mongo Sucesfully!');
+    logger.info('Connected to Mongo Sucesfully!');
 });
 
 export default passwordDB;
