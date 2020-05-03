@@ -20,13 +20,17 @@ router.post('/start', async (req: express.Request, res: express.Response) => {
 });
 
 
-router.post('/generatePassword', async (req: express.Request, res: express.Response) => {
-    const { roomId } = req.body;
+router.post('/nextPasswordHolder', async (req: express.Request, res: express.Response) => {
+    const { roomId, passwordHolder } = req.body;
 
     const game = await Game.findOne({ roomId });
 
     if (!game) {
         res.json({ success: false, message: messages.gameNotFound });
+        return;
+    }
+    if (!game.players.length) {
+        res.json({ success: false, message: messages.noPlayers });
         return;
     }
 
@@ -36,13 +40,22 @@ router.post('/generatePassword', async (req: express.Request, res: express.Respo
         password = wordGenerator();
     }
 
+    const playerIndex = game.players.findIndex((player) => player.username === passwordHolder);
+
+    let nextPasswordHolder;
+    if (playerIndex === game.players.length - 1) {
+        [nextPasswordHolder] = game.players;
+    } else {
+        nextPasswordHolder = game.players[playerIndex + 1];
+    }
+
     game.password = password;
     game.usedPasswords.push(password);
     game.markModified('usedPasswords');
 
     await game.save();
 
-    res.json({ success: true, message: password });
+    res.json({ success: true, message: { password, passwordHolder: nextPasswordHolder } });
 });
 
 export default router;
