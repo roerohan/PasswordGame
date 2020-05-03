@@ -3,4 +3,6 @@ export default {
     gameNotFound: 'gameNotFound',
     gameStarted: 'gameStarted',
     noPlayers: 'noPlayers',
+    incorrect: 'incorrect',
+    correct: 'correct',
 };

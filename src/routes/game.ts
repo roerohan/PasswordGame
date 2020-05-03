@@ -6,15 +6,27 @@ import messages from '../utils/messages';
 
 const router = express.Router();
 
+let GUESSER_POINTS: number; let
+    HOLDER_POINTS: number;
+if (process.env.GUESSER_POINTS) GUESSER_POINTS = Number(process.env.GUESSER_POINTS);
+if (process.env.HOLDER_POINTS) HOLDER_POINTS = Number(process.env.HOLDER_POINTS);
+else if (!process.env.GUESSER_POINTS) {
+    GUESSER_POINTS = 50;
+    HOLDER_POINTS = 100;
+}
+
 router.post('/start', async (req: express.Request, res: express.Response) => {
     const { roomId } = req.body;
 
-    const game = await Game.updateOne({ roomId }, { hasStarted: true });
+    const game = await Game.findOne({ roomId });
 
-    if (!game.nModified) {
+    if (!game) {
         res.json({ success: false, message: messages.gameNotFound });
         return;
     }
+
+    game.hasStarted = true;
+    await game.save();
 
     res.json({ success: true, message: messages.gameStarted });
 });
@@ -57,6 +69,31 @@ router.post('/nextPasswordHolder', async (req: express.Request, res: express.Res
     await game.save();
 
     res.json({ success: true, message: { password, passwordHolder: nextPasswordHolder } });
+});
+
+router.post('/attempt', async (req: express.Request, res: express.Response) => {
+    const { roomId, passwordHolder, player } = req.body;
+
+    const game = await Game.findOne({ roomId });
+
+    if (!game) {
+        res.json({ success: false, message: messages.gameNotFound });
+        return;
+    }
+    if (!game.players.length) {
+        res.json({ success: false, message: messages.noPlayers });
+        return;
+    }
+
+    game.players = game.players.map((p) => {
+        const play = p;
+        if (play.username === player) {
+            play.points += GUESSER_POINTS;
+        } else if (play.username === passwordHolder) {
+            play.points += HOLDER_POINTS;
+        }
+        return play;
+    });
 });
 
 export default router;
