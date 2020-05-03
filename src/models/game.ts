@@ -36,11 +36,11 @@ export default new mongoose.Schema({
 
 export interface GameInterface extends mongoose.Document {
     roomId: string,
-    players: [PlayerInterface],
+    players: Array<PlayerInterface>,
     access: 'public' | 'private',
     rounds: number,
     hasStarted: boolean,
     passwordHolder: string,
     password: string,
-    usedPasswords: [string],
+    usedPasswords: Array<string>,
 }
