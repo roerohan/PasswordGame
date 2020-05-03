@@ -28,8 +28,11 @@ export default new mongoose.Schema({
     },
     passwordHolder: String,
     password: String,
+    usedPasswords: {
+        type: [String],
+        required: true,
+    },
 });
-
 
 export interface GameInterface extends mongoose.Document {
     roomId: string,
@@ -39,4 +42,5 @@ export interface GameInterface extends mongoose.Document {
     hasStarted: boolean,
     passwordHolder: string,
     password: string,
+    usedPasswords: [string],
 }
