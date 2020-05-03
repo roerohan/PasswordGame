@@ -110,4 +110,17 @@ router.post('/attempt', async (req: express.Request, res: express.Response) => {
     res.json({ success: true, message: messages.correct });
 });
 
+router.post('/end', async (req: express.Request, res: express.Response) => {
+    const { roomId } = req.body;
+
+    const game = await Game.findOneAndDelete({ roomId });
+
+    res.json({
+        success: true,
+        message: {
+            players: game.players,
+        },
+    });
+});
+
 export default router;
