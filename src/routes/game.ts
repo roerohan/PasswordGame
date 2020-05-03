@@ -40,7 +40,8 @@ router.post('/nextPasswordHolder', async (req: express.Request, res: express.Res
         password = wordGenerator();
     }
 
-    const playerIndex = game.players.findIndex((player) => player.username === passwordHolder);
+    const playerIndex = passwordHolder
+        ? game.players.findIndex((player) => player.username === passwordHolder) : 0;
 
     let nextPasswordHolder;
     if (playerIndex === game.players.length - 1) {
