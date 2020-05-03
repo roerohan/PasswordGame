@@ -72,7 +72,12 @@ router.post('/nextPasswordHolder', async (req: express.Request, res: express.Res
 });
 
 router.post('/attempt', async (req: express.Request, res: express.Response) => {
-    const { roomId, passwordHolder, player } = req.body;
+    const {
+        roomId,
+        passwordHolder,
+        player,
+        password,
+    } = req.body;
 
     const game = await Game.findOne({ roomId });
 
@@ -85,6 +90,11 @@ router.post('/attempt', async (req: express.Request, res: express.Response) => {
         return;
     }
 
+    if (password !== game.password) {
+        res.json({ success: true, message: messages.incorrect });
+        return;
+    }
+
     game.players = game.players.map((p) => {
         const play = p;
         if (play.username === player) {
@@ -94,6 +104,10 @@ router.post('/attempt', async (req: express.Request, res: express.Response) => {
         }
         return play;
     });
+
+    await game.save();
+
+    res.json({ success: true, message: messages.correct });
 });
 
 export default router;
