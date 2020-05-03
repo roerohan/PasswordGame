@@ -2,6 +2,7 @@ import express from 'express';
 
 import { Game } from '../models/models';
 import wordGenerator from '../utils/wordGenerator';
+import messages from '../utils/messages';
 
 const router = express.Router();
 
@@ -11,11 +12,11 @@ router.post('/start', async (req: express.Request, res: express.Response) => {
     const game = await Game.updateOne({ roomId }, { hasStarted: true });
 
     if (!game.nModified) {
-        res.json({ success: false, message: 'gameNotFound' });
+        res.json({ success: false, message: messages.gameNotFound });
         return;
     }
 
-    res.json({ success: true, message: 'gameStarted' });
+    res.json({ success: true, message: messages.gameStarted });
 });
 
 
@@ -25,7 +26,7 @@ router.post('/generatePassword', async (req: express.Request, res: express.Respo
     const game = await Game.findOne({ roomId });
 
     if (!game) {
-        res.json({ success: false, message: 'gameNotFound' });
+        res.json({ success: false, message: messages.gameNotFound });
         return;
     }
 
