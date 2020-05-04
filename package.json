@@ -34,10 +34,10 @@
     "eslint-plugin-import": "^2.20.2",
     "husky": "^4.2.5",
     "ts-node": "^8.9.1",
+    "@types/mongoose": "^5.7.14",
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "@types/mongoose": "^5.7.14",
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
