@@ -9,8 +9,14 @@ const { ROUNDS } = process.env;
 const router = express.Router();
 
 router.get('/create', async (req: express.Request, res: express.Response) => {
-    const { username, access } = req.query;
+    const { username } = req.query;
+
+    const access = req.query.access ? req.query.access : 'public';
     let { rounds } = req.query;
+    if (!username) {
+        res.json({ success: false, message: messages.userNotFound });
+        return;
+    }
     if (!rounds) {
         rounds = ROUNDS;
     }
@@ -42,7 +48,7 @@ router.get('/join/:roomId', async (req: express.Request, res: express.Response) 
         roomId = element[0].roomId;
     }
     if (!username) {
-        res.json({ success: false, message: messages.usernameNotSet });
+        res.json({ success: false, message: messages.userNotFound });
         return;
     }
     const player = new Player({
