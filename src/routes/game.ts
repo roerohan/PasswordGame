@@ -6,8 +6,9 @@ import messages from '../utils/messages';
 
 const router = express.Router();
 
-let GUESSER_POINTS: number; let
-    HOLDER_POINTS: number;
+let GUESSER_POINTS: number;
+let HOLDER_POINTS: number;
+
 if (process.env.GUESSER_POINTS) GUESSER_POINTS = Number(process.env.GUESSER_POINTS);
 if (process.env.HOLDER_POINTS) HOLDER_POINTS = Number(process.env.HOLDER_POINTS);
 else if (!process.env.GUESSER_POINTS) {
@@ -70,6 +71,7 @@ router.post('/nextPasswordHolder', async (req: express.Request, res: express.Res
 
     res.json({ success: true, message: { password, passwordHolder: nextPasswordHolder } });
 });
+
 
 router.post('/attempt', async (req: express.Request, res: express.Response) => {
     const {
