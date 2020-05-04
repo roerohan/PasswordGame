@@ -13,6 +13,6 @@ export default new mongoose.Schema({
 });
 
 export interface PlayerInterface extends mongoose.Document {
-    username: string,
-    points: number,
+    username: string;
+    points: number;
 }

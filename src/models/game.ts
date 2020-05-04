@@ -32,17 +32,25 @@ export default new mongoose.Schema({
         type: [String],
         required: true,
     },
-    creator: String,
+    solvedBy: {
+        type: [String],
+        default: [],
+    },
+    creator: {
+        type: String,
+        required: true,
+    },
 });
 
 export interface GameInterface extends mongoose.Document {
-    roomId: string,
-    players: Array<PlayerInterface>,
-    access: 'public' | 'private',
-    rounds: number,
-    hasStarted: boolean,
-    passwordHolder: string,
-    password: string,
-    usedPasswords: Array<string>,
-    creator: string,
+    roomId: string;
+    players: Array<PlayerInterface>;
+    access: 'public' | 'private';
+    rounds: number;
+    hasStarted: boolean;
+    passwordHolder: string;
+    password: string;
+    usedPasswords: Array<string>;
+    solvedBy: Array<string>;
+    creator: string;
 }
