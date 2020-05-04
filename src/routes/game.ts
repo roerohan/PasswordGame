@@ -26,13 +26,18 @@ router.post('/start', async (req: express.Request, res: express.Response) => {
 
     const game = await Game.findOne({ roomId });
 
+    if (!game) {
+        res.json({ success: false, message: messages.gameNotFound });
+        return;
+    }
+
     if (game.creator !== username) {
         res.json({ success: false, message: messages.userNotFound });
         return;
     }
 
-    if (!game) {
-        res.json({ success: false, message: messages.gameNotFound });
+    if (game.players.length < 2) {
+        res.json({ success: false, message: messages.notEnoughPlayers });
         return;
     }
 
@@ -74,12 +79,13 @@ router.post('/nextPasswordHolder', async (req: express.Request, res: express.Res
     }
 
     game.password = password;
+    game.passwordHolder = nextPasswordHolder.username;
     game.usedPasswords.push(password);
     game.markModified('usedPasswords');
 
     await game.save();
 
-    res.json({ success: true, message: { password, passwordHolder: nextPasswordHolder } });
+    res.json({ success: true, message: { passwordHolder: nextPasswordHolder } });
 });
 
 
@@ -90,6 +96,11 @@ router.post('/attempt', async (req: express.Request, res: express.Response) => {
         player,
         password,
     } = req.body;
+
+    if (player === passwordHolder) {
+        res.json({ success: false, message: messages.serverError });
+        return;
+    }
 
     const game = await Game.findOne({ roomId });
 

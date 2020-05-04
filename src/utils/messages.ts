@@ -9,4 +9,5 @@ export default {
     roomCreated: 'roomCreated',
     playerAdded: 'playerAdded',
     userNotFound: 'userNotFound',
+    notEnoughPlayers: 'notEnoughPlayers',
 };
