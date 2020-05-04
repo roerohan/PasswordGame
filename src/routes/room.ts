@@ -21,6 +21,7 @@ router.post('/create', async (req: express.Request, res: express.Response) => {
     const roomId: string = cryptoRandomString({ length: 6 });
     const player = new Player({
         username,
+        creator: true,
     });
 
     const game = new Game({

@@ -10,9 +10,14 @@ export default new mongoose.Schema({
         required: true,
         default: 0,
     },
+    creator: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 export interface PlayerInterface extends mongoose.Document {
     username: string,
     points: number,
+    creator: boolean,
 }
