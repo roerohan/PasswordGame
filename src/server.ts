@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 
 import mainRouter from './routes/mainRouter';
 import gameRouter from './routes/game';
+import roomRouter from './routes/room';
 import logger from './utils/logger';
 
 dotenv.config();
@@ -24,3 +25,4 @@ app.listen(PORT, (err: Error) => {
 
 app.use('/', mainRouter);
 app.use('/game', gameRouter);
+app.use('/', roomRouter);
