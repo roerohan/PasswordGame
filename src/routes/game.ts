@@ -62,6 +62,11 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
         return;
     }
 
+    if (game.currentRound >= game.rounds) {
+        res.json({ success: false, message: messages.gameEnded });
+        return;
+    }
+
     let password = wordGenerator();
 
     while (game.usedPasswords.includes(password)) {
@@ -80,6 +85,7 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
 
     game.password = password;
     game.passwordHolder = nextPasswordHolder.username;
+    game.currentRound += 1;
     game.usedPasswords.push(password);
     game.markModified('usedPasswords');
     game.solvedBy = [];

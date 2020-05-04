@@ -21,6 +21,11 @@ export default new mongoose.Schema({
         required: true,
         default: 0,
     },
+    currentRound: {
+        type: Number,
+        required: true,
+        default: 1,
+    },
     hasStarted: {
         type: Boolean,
         required: true,
@@ -47,6 +52,7 @@ export interface GameInterface extends mongoose.Document {
     players: Array<PlayerInterface>;
     access: 'public' | 'private';
     rounds: number;
+    currentRound: number;
     hasStarted: boolean;
     passwordHolder: string;
     password: string;
