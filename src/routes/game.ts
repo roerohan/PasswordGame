@@ -32,7 +32,7 @@ router.post('/start', async (req: express.Request, res: express.Response) => {
     }
 
     if (game.creator !== username) {
-        res.json({ success: false, message: messages.userNotFound });
+        res.json({ success: false, message: messages.notAdmin });
         return;
     }
 
@@ -57,8 +57,8 @@ router.post('/nextPasswordHolder', async (req: express.Request, res: express.Res
         res.json({ success: false, message: messages.gameNotFound });
         return;
     }
-    if (!game.players.length) {
-        res.json({ success: false, message: messages.noPlayers });
+    if (!game.hasStarted) {
+        res.json({ success: false, message: messages.gameNotStarted });
         return;
     }
 
@@ -92,15 +92,9 @@ router.post('/nextPasswordHolder', async (req: express.Request, res: express.Res
 router.post('/attempt', async (req: express.Request, res: express.Response) => {
     const {
         roomId,
-        passwordHolder,
-        player,
+        username,
         password,
     } = req.body;
-
-    if (player === passwordHolder) {
-        res.json({ success: false, message: messages.serverError });
-        return;
-    }
 
     const game = await Game.findOne({ roomId });
 
@@ -108,8 +102,8 @@ router.post('/attempt', async (req: express.Request, res: express.Response) => {
         res.json({ success: false, message: messages.gameNotFound });
         return;
     }
-    if (!game.players.length) {
-        res.json({ success: false, message: messages.noPlayers });
+    if (!game.hasStarted) {
+        res.json({ success: false, message: messages.gameNotStarted });
         return;
     }
 
@@ -118,11 +112,16 @@ router.post('/attempt', async (req: express.Request, res: express.Response) => {
         return;
     }
 
+    if (username === game.passwordHolder) {
+        res.json({ success: false, message: messages.serverError });
+        return;
+    }
+
     game.players = game.players.map((p) => {
         const play = p;
-        if (play.username === player) {
+        if (play.username === username) {
             play.points += GUESSER_POINTS;
-        } else if (play.username === passwordHolder) {
+        } else if (play.username === game.passwordHolder) {
             play.points += HOLDER_POINTS;
         }
         return play;
@@ -137,6 +136,15 @@ router.post('/end', async (req: express.Request, res: express.Response) => {
     const { roomId } = req.body;
 
     const game = await Game.findOneAndDelete({ roomId });
+
+    if (!game) {
+        res.json({ success: false, message: messages.gameNotFound });
+        return;
+    }
+    if (!game.hasStarted) {
+        res.json({ success: false, message: messages.gameNotStarted });
+        return;
+    }
 
     res.json({
         success: true,
