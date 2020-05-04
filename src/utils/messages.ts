@@ -12,4 +12,5 @@ export default {
     userNotFound: 'userNotFound',
     notEnoughPlayers: 'notEnoughPlayers',
     notAdmin: 'notAdmin',
+    alreadySolved: 'alreadySolved',
 };

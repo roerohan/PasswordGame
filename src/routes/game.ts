@@ -48,7 +48,7 @@ router.post('/start', async (req: express.Request, res: express.Response) => {
 });
 
 
-router.post('/nextPasswordHolder', async (req: express.Request, res: express.Response) => {
+router.post('/next', async (req: express.Request, res: express.Response) => {
     const { roomId, passwordHolder } = req.body;
 
     const game = await Game.findOne({ roomId });
@@ -82,10 +82,15 @@ router.post('/nextPasswordHolder', async (req: express.Request, res: express.Res
     game.passwordHolder = nextPasswordHolder.username;
     game.usedPasswords.push(password);
     game.markModified('usedPasswords');
+    game.solvedBy = [];
+    game.markModified('solvedBy');
 
     await game.save();
 
-    res.json({ success: true, message: { passwordHolder: nextPasswordHolder } });
+    res.json({
+        success: true,
+        message: { passwordHolder: nextPasswordHolder, passwordLength: password.length },
+    });
 });
 
 
@@ -116,6 +121,14 @@ router.post('/attempt', async (req: express.Request, res: express.Response) => {
         res.json({ success: false, message: messages.serverError });
         return;
     }
+
+    if (game.solvedBy.includes(username)) {
+        res.json({ success: false, message: messages.alreadySolved });
+        return;
+    }
+
+    game.solvedBy.push(username);
+    game.markModified('solvedBy');
 
     game.players = game.players.map((p) => {
         const play = p;
