@@ -8,5 +8,5 @@ export default {
     correct: 'correct',
     roomCreated: 'roomCreated',
     playerAdded: 'playerAdded',
-    usernameNotSet: 'usernameNotSet',
+    userNotFound: 'userNotFound',
 };
