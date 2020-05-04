@@ -17,9 +17,19 @@ else if (!process.env.GUESSER_POINTS) {
 }
 
 router.post('/start', async (req: express.Request, res: express.Response) => {
-    const { roomId } = req.body;
+    const { roomId, username } = req.body;
+
+    if (!username) {
+        res.json({ success: false, message: messages.userNotFound });
+        return;
+    }
 
     const game = await Game.findOne({ roomId });
+
+    if (game.creator !== username) {
+        res.json({ success: false, message: messages.userNotFound });
+        return;
+    }
 
     if (!game) {
         res.json({ success: false, message: messages.gameNotFound });
