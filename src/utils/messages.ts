@@ -6,4 +6,7 @@ export default {
     noPlayers: 'noPlayers',
     incorrect: 'incorrect',
     correct: 'correct',
+    roomCreated: 'roomCreated',
+    playerAdded: 'playerAdded',
+    userNotFound: 'userNotFound',
 };
