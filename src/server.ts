@@ -25,4 +25,4 @@ app.listen(PORT, (err: Error) => {
 
 app.use('/', mainRouter);
 app.use('/game', gameRouter);
-app.use('/', roomRouter);
+app.use('/room', roomRouter);
