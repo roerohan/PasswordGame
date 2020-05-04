@@ -32,6 +32,7 @@ export default new mongoose.Schema({
         type: [String],
         required: true,
     },
+    creator: String,
 });
 
 export interface GameInterface extends mongoose.Document {
@@ -43,4 +44,5 @@ export interface GameInterface extends mongoose.Document {
     passwordHolder: string,
     password: string,
     usedPasswords: Array<string>,
+    creator: string,
 }
