@@ -109,6 +109,11 @@ router.post('/attempt', async (req: express.Request, res: express.Response) => {
         password,
     } = req.body;
 
+    if (!username) {
+        res.json({ success: false, message: messages.userNotFound });
+        return;
+    }
+
     const game = await Game.findOne({ roomId });
 
     if (!game) {
@@ -122,11 +127,6 @@ router.post('/attempt', async (req: express.Request, res: express.Response) => {
 
     if (password !== game.password) {
         res.json({ success: true, message: messages.incorrect });
-        return;
-    }
-
-    if (!username) {
-        res.json({ success: false, message: messages.userNotFound });
         return;
     }
 
