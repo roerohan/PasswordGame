@@ -102,6 +102,8 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
         nextPasswordHolder = game.players[playerIndex + 1];
     }
 
+    const previousPassword = game.password || '';
+
     game.password = password;
     game.passwordHolder = nextPasswordHolder.username;
     game.usedPasswords.push(password);
@@ -118,6 +120,7 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
             currentRound: game.currentRound,
             passwordHolder: nextPasswordHolder,
             passwordLength: password.length,
+            previousPassword,
         },
     });
 });

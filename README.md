@@ -81,6 +81,7 @@ Frontend Repo: https://github.com/ashikka/Password
         currentRound: number,
         passwordHolder: string,
         passwordLength: number,
+        previousPassword: string,
         players: [
             {
                 username: string,
