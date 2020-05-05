@@ -49,7 +49,7 @@ router.post('/start', async (req: express.Request, res: express.Response) => {
 
 
 router.post('/next', async (req: express.Request, res: express.Response) => {
-    const { roomId, passwordHolder } = req.body;
+    const { roomId } = req.body;
 
     const game = await Game.findOne({ roomId });
 
@@ -72,6 +72,8 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
     while (game.usedPasswords.includes(password)) {
         password = wordGenerator();
     }
+
+    const { passwordHolder } = game;
 
     const playerIndex = passwordHolder
         ? game.players.findIndex((player) => player.username === passwordHolder) : 0;
