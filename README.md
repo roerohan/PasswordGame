@@ -45,8 +45,9 @@ Frontend Repo: https://github.com/ashikka/Password
 
 ## /game
 
-- `POST /game/start - username, roomId`
+- `POST /game/start - username, roomId, ?access, ?rounds`
     * `username` must be the creator of the room.
+    * Modifies access and rounds according to `access` and `rounds`.
     * Starts the game for room `roomId`.
     * Returns a JSON of the following format:
 ```typescript
