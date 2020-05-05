@@ -127,6 +127,7 @@ Frontend Repo: https://github.com/ashikka/Password
     message: {
         passwordHolder: string,
         passwordLength: number,
+        solvedBy: string[],
         players: [
             {
                 username: string,
