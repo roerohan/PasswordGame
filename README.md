@@ -48,7 +48,7 @@ Frontend Repo: https://github.com/ashikka/Password
     message: {
         passwordHolder: string,
         passwordLength: string,
-    }
+    },
 }
 ```
 
@@ -75,7 +75,7 @@ Frontend Repo: https://github.com/ashikka/Password
                 username: string,
                 points: string,
             },
-        ]
+        ],
     },
 }
 ```
