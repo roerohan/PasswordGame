@@ -100,6 +100,7 @@ router.get('/join/:roomId', async (req: express.Request, res: express.Response) 
         message: {
             roomId,
             players: game.players,
+            creator: game.creator,
         },
     });
 });
