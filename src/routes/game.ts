@@ -17,7 +17,12 @@ else if (!process.env.GUESSER_POINTS) {
 }
 
 router.post('/start', async (req: express.Request, res: express.Response) => {
-    const { roomId, username } = req.body;
+    const {
+        roomId,
+        username,
+        access,
+        rounds,
+    } = req.body;
 
     if (!username) {
         res.json({ success: false, message: messages.userNotFound });
@@ -40,6 +45,9 @@ router.post('/start', async (req: express.Request, res: express.Response) => {
         res.json({ success: false, message: messages.notEnoughPlayers });
         return;
     }
+
+    game.access = access || game.access;
+    game.rounds = rounds || game.rounds;
 
     game.hasStarted = true;
     await game.save();
