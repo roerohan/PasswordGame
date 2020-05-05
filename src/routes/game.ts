@@ -44,7 +44,15 @@ router.post('/start', async (req: express.Request, res: express.Response) => {
     game.hasStarted = true;
     await game.save();
 
-    res.json({ success: true, message: messages.gameStarted });
+    res.json({
+        success: true,
+        message: {
+            players: game.players,
+            hasStarted: game.hasStarted,
+            rounds: game.rounds,
+            currentRound: game.currentRound,
+        },
+    });
 });
 
 
@@ -81,13 +89,13 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
     let nextPasswordHolder;
     if (playerIndex === game.players.length - 1) {
         [nextPasswordHolder] = game.players;
+        game.currentRound += 1;
     } else {
         nextPasswordHolder = game.players[playerIndex + 1];
     }
 
     game.password = password;
     game.passwordHolder = nextPasswordHolder.username;
-    game.currentRound += 1;
     game.usedPasswords.push(password);
     game.markModified('usedPasswords');
     game.solvedBy = [];
@@ -97,7 +105,12 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
 
     res.json({
         success: true,
-        message: { passwordHolder: nextPasswordHolder, passwordLength: password.length },
+        message: {
+            players: game.players,
+            currentRound: game.currentRound,
+            passwordHolder: nextPasswordHolder,
+            passwordLength: password.length,
+        },
     });
 });
 
@@ -155,7 +168,14 @@ router.post('/attempt', async (req: express.Request, res: express.Response) => {
 
     await game.save();
 
-    res.json({ success: true, message: messages.correct });
+    res.json({
+        success: true,
+        message: {
+            players: game.players,
+            currentRound: game.currentRound,
+            passwordHolder: game.passwordHolder,
+        },
+    });
 });
 
 router.post('/end', async (req: express.Request, res: express.Response) => {
@@ -175,6 +195,8 @@ router.post('/end', async (req: express.Request, res: express.Response) => {
     res.json({
         success: true,
         message: {
+            currentRound: game.currentRound,
+            rounds: game.rounds,
             players: game.players,
         },
     });
