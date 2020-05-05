@@ -185,6 +185,7 @@ router.post('/attempt', async (req: express.Request, res: express.Response) => {
             players: game.players,
             currentRound: game.currentRound,
             passwordHolder: game.passwordHolder,
+            solvedBy: game.solvedBy,
         },
     });
 });
