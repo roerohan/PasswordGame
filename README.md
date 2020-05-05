@@ -42,6 +42,26 @@ Frontend Repo: https://github.com/ashikka/Password
 
 - `GET /room/join/:roomId - username`
     * Add user `username` to the room.
+    * Returns a JSON of the following format:
+```typescript
+{
+    success: boolean,
+    message: {
+        roomId: string,
+        creator: string,
+        players: [
+            {
+                username: string,
+                points: string,
+            },
+            {
+                username: string,
+                points: string,
+            },
+        ],
+    },
+}
+```
 
 ## /game
 
