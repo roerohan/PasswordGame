@@ -82,13 +82,7 @@ router.get('/join/:roomId', async (req: express.Request, res: express.Response) 
     }
 
     if (game.players.find((player) => player.username === username)) {
-        res.json({
-            success: false,
-            message: {
-                roomId,
-                players: game.players,
-            },
-        });
+        res.json({ success: false, message: messages.usernameAlreadyExists });
         return;
     }
 
@@ -101,7 +95,13 @@ router.get('/join/:roomId', async (req: express.Request, res: express.Response) 
 
     await game.save();
 
-    res.json({ success: true, message: messages.playerAdded });
+    res.json({
+        success: true,
+        message: {
+            roomId,
+            players: game.players,
+        },
+    });
 });
 
 
