@@ -29,7 +29,16 @@ Frontend Repo: https://github.com/ashikka/Password
     * Create a room with creator as `username`.
     * `access` determines the type of room, may be `private` or `public`.
     * `rounds` implies the number of rounds in the game.
-    * Returns the `roomId` in the response JSON.
+    * Returns the `roomId` and `creator` in the response JSON.
+```typescript
+{
+    success: boolean,
+    message: {
+        roomId: string,
+        creator: string,
+    },
+}
+```
 
 - `GET /room/join/:roomId - username`
     * Add user `username` to the room.
@@ -39,6 +48,27 @@ Frontend Repo: https://github.com/ashikka/Password
 - `POST /game/start - username, roomId`
     * `username` must be the creator of the room.
     * Starts the game for room `roomId`.
+    * Returns a JSON of the following format:
+```typescript
+{
+    success: boolean,
+    message: {
+        hasStarted: boolean,
+        rounds: number,
+        currentRound: number,
+        players: [
+            {
+                username: string,
+                points: string,
+            },
+            {
+                username: string,
+                points: string,
+            },
+        ],
+    },
+}
+```
 
 - `POST /game/next - roomId`
     * Generates a new password in the backend for the room, returns the new passwordHolder and the length of the new password.
@@ -47,16 +77,47 @@ Frontend Repo: https://github.com/ashikka/Password
 {
     success: boolean,
     message: {
+        currentRound: number,
         passwordHolder: string,
-        passwordLength: string,
+        passwordLength: number,
+        players: [
+            {
+                username: string,
+                points: string,
+            },
+            {
+                username: string,
+                points: string,
+            },
+        ],
     },
 }
 ```
 
 - `POST /game/attempt - roomId, username, password`
     * Matches the requested `password` with the current password for the room `roomId`.
-    * If they match, adds user to list of solvers for the current password and awards the user with points.
-    * Otherwise returns `{ success: true, message: incorrect }`.
+    * If they don't match, returns `{ success: true, message: incorrect }`.
+    * Otherwise, adds user to list of solvers for the current password and awards the user with points.
+    * Returns a JSON of the format:
+```typescript
+{
+    success: boolean,
+    message: {
+        passwordHolder: string,
+        passwordLength: number,
+        players: [
+            {
+                username: string,
+                points: string,
+            },
+            {
+                username: string,
+                points: string,
+            },
+        ],
+    },
+}
+```
 
 - `POST /game/end - roomId`
     * Ends the game for `roomId`.
