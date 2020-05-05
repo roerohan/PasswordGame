@@ -15,4 +15,5 @@ export default {
     alreadySolved: 'alreadySolved',
     usernameAlreadyExists: 'usernameAlreadyExists',
     usernameInvalid: 'usernameInvalid',
+    noRooms: 'noRooms',
 };
