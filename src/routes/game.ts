@@ -78,11 +78,6 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
         return;
     }
 
-    if (game.currentRound >= game.rounds) {
-        res.json({ success: false, message: messages.gameEnded });
-        return;
-    }
-
     let password = wordGenerator();
 
     while (game.usedPasswords.includes(password)) {
@@ -100,6 +95,11 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
         game.currentRound += 1;
     } else {
         nextPasswordHolder = game.players[playerIndex + 1];
+    }
+
+    if (game.currentRound > game.rounds) {
+        res.json({ success: false, message: messages.gameEnded });
+        return;
     }
 
     const previousPassword = game.password || '';
