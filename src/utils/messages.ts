@@ -13,4 +13,6 @@ export default {
     notEnoughPlayers: 'notEnoughPlayers',
     notAdmin: 'notAdmin',
     alreadySolved: 'alreadySolved',
+    usernameAlreadyExists: 'usernameAlreadyExists',
+    usernameInvalid: 'usernameInvalid',
 };

@@ -6,6 +6,7 @@ import messages from '../utils/messages';
 const router = express.Router();
 
 const ROUNDS = process.env.ROUNDS || 3;
+const regex = /^[a-zA-Z0-9._-]{3,20}$/;
 
 router.post('/create', async (req: express.Request, res: express.Response) => {
     const { username } = req.body;
@@ -15,6 +16,11 @@ router.post('/create', async (req: express.Request, res: express.Response) => {
 
     if (!username) {
         res.json({ success: false, message: messages.userNotFound });
+        return;
+    }
+
+    if (!(regex.test(username))) {
+        res.json({ success: false, message: messages.usernameInvalid });
         return;
     }
 
@@ -58,15 +64,26 @@ router.get('/join/:roomId', async (req: express.Request, res: express.Response) 
         return;
     }
 
-    const player = new Player({
-        username,
-    });
+    if (!(regex.test(username.toString()))) {
+        res.json({ success: false, message: messages.usernameInvalid });
+        return;
+    }
 
     const game = await Game.findOne({ roomId });
     if (!game) {
         res.json({ success: false, message: messages.gameNotFound });
         return;
     }
+    if (game.players.find((player) => player.username === username)) {
+        res.json({ success: false, message: messages.usernameAlreadyExists });
+        return;
+    }
+
+
+    const player = new Player({
+        username,
+    });
+
 
     game.players.push(player);
     game.markModified('players');
