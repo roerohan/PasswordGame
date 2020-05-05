@@ -33,7 +33,7 @@ router.post('/create', async (req: express.Request, res: express.Response) => {
 
     await game.save();
 
-    res.json({ success: true, message: messages.roomCreated });
+    res.json({ success: true, message: roomId });
 });
 
 router.get('/join/:roomId', async (req: express.Request, res: express.Response) => {
