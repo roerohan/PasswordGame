@@ -54,6 +54,12 @@ router.get('/join/:roomId', async (req: express.Request, res: express.Response) 
 
     if (!roomId) {
         const n: number = await Game.count({ access: 'public' });
+
+        if (!n) {
+            res.json({ success: false, message: messages.noRooms });
+            return;
+        }
+
         const r: number = Math.floor(Math.random() * n);
         const element = await Game.find({ access: 'public' }).limit(1).skip(r);
         [{ roomId }] = element;
@@ -76,7 +82,13 @@ router.get('/join/:roomId', async (req: express.Request, res: express.Response) 
     }
 
     if (game.players.find((player) => player.username === username)) {
-        res.json({ success: false, message: messages.usernameAlreadyExists });
+        res.json({
+            success: false,
+            message: {
+                roomId,
+                players: game.players,
+            },
+        });
         return;
     }
 
