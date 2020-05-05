@@ -18,7 +18,7 @@ router.post('/create', async (req: express.Request, res: express.Response) => {
         return;
     }
 
-    if (!(/^[a-zA-Z0-9._-]{3,20}$/i.test(username))) {
+    if (!(/^[a-zA-Z0-9._-]{3,20}$/.test(username))) {
         res.json({ success: false, message: messages.usernameInvalid });
         return;
     }
@@ -57,7 +57,7 @@ router.get('/join/:roomId', async (req: express.Request, res: express.Response) 
         return;
     }
 
-    if (!(/^[a-zA-Z0-9._-]{3,20}$/i.test(username.toString()))) {
+    if (!(/^[a-zA-Z0-9._-]{3,20}$/.test(username.toString()))) {
         res.json({ success: false, message: messages.usernameInvalid });
         return;
     }
