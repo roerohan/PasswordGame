@@ -29,6 +29,7 @@ Frontend Repo: https://github.com/ashikka/Password
     * Create a room with creator as `username`.
     * `access` determines the type of room, may be `private` or `public`.
     * `rounds` implies the number of rounds in the game.
+    * Returns the `roomId` in the response JSON.
 
 - `GET /room/join/:roomId - username`
     * Add user `username` to the room.
