@@ -123,6 +123,11 @@ router.post('/attempt', async (req: express.Request, res: express.Response) => {
         return;
     }
 
+    if (!username) {
+        res.json({ success: false, message: messages.userNotFound });
+        return;
+    }
+
     if (username === game.passwordHolder) {
         res.json({ success: false, message: messages.serverError });
         return;
