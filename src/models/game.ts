@@ -45,18 +45,16 @@ export default new mongoose.Schema({
         type: String,
         required: true,
     },
-    time: {
-        type: Object,
-        required: true,
-        // startTime: {
-        //     type: Number,
-        //     required: true,
-        // },
-        // endTime: {
-        //     type: Number,
-        //     required: true,
-        // },
-    },
+    time: new mongoose.Schema({
+        start: {
+            type: String,
+            required: true,
+        },
+        end: {
+            type: String,
+            required: true,
+        },
+    }),
     hint: {
         type: String,
         required: true,
