@@ -109,8 +109,8 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
     const time = date.getTime();
     const DURATION = parseInt(process.env.DURATION, 10) || 60;
 
-    game.time.startTime = time;
-    game.time.endTime = time + (DURATION * 1000);
+    game.time.start = time;
+    game.time.end = time + (DURATION * 1000);
     game.password = password;
     game.passwordHolder = nextPasswordHolder.username;
     game.usedPasswords.push(password);
@@ -157,7 +157,7 @@ router.post('/attempt', async (req: express.Request, res: express.Response) => {
     }
 
     const date: Date = new Date();
-    if (date.getTime() > game.time.endTime) {
+    if (date.getTime() > game.time.end) {
         res.json({ success: true, message: messages.timeOver });
         return;
     }

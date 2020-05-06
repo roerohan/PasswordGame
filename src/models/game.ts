@@ -46,19 +46,20 @@ export default new mongoose.Schema({
         required: true,
     },
     time: {
-        startTime: {
-            type: Number,
-            required: true,
-        },
-        endTime: {
-            type: Number,
-            required: true,
-        },
+        type: Object,
+        required: true,
+        // startTime: {
+        //     type: Number,
+        //     required: true,
+        // },
+        // endTime: {
+        //     type: Number,
+        //     required: true,
+        // },
     },
     hint: {
         type: String,
         required: true,
-
     },
 });
 
@@ -74,6 +75,6 @@ export interface GameInterface extends mongoose.Document {
     usedPasswords: Array<string>;
     solvedBy: Array<string>;
     creator: string;
-    time: any;
+    time: {start: number, end: number};
     hint: string;
 }
