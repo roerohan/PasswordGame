@@ -55,9 +55,7 @@ export default new mongoose.Schema({
             required: true,
         },
     }),
-    hints: {
-        type: [String],
-    },
+    hints: [String],
 });
 
 export interface GameInterface extends mongoose.Document {
