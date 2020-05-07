@@ -161,6 +161,7 @@ router.post('/attempt', async (req: express.Request, res: express.Response) => {
         res.json({ success: true, message: messages.timeOver });
         return;
     }
+
     if (password !== game.password) {
         res.json({ success: true, message: messages.incorrect });
         return;
