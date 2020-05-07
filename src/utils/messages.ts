@@ -16,4 +16,6 @@ export default {
     usernameAlreadyExists: 'usernameAlreadyExists',
     usernameInvalid: 'usernameInvalid',
     noRooms: 'noRooms',
+    joinedRoom: 'joinedRoom',
+    disconnected: 'disconnected',
 };
