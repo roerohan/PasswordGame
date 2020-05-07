@@ -117,6 +117,8 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
     game.markModified('usedPasswords');
     game.solvedBy = [];
     game.markModified('solvedBy');
+    game.hints = [];
+    game.markModified('hints');
 
     await game.save();
 
