@@ -17,4 +17,6 @@ export default {
     usernameInvalid: 'usernameInvalid',
     noRooms: 'noRooms',
     timeOver: 'timeOver',
+    joinedRoom: 'joinedRoom',
+    disconnected: 'disconnected',
 };
