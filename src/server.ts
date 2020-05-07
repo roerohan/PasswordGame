@@ -1,15 +1,20 @@
 import express from 'express';
+import http from 'http';
+import socketio from 'socket.io';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 
 import mainRouter from './routes/mainRouter';
 import gameRouter from './routes/game';
 import roomRouter from './routes/room';
+import chat from './sockets/chat';
 import logger from './utils/logger';
 
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
+const io = socketio(server);
 const PORT = process.env.PORT || '3000';
 
 app.use(bodyParser.urlencoded({
@@ -17,12 +22,12 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-app.listen(PORT, (err: Error) => {
-    if (err) throw err;
-
-    logger.info(`Server is listening on port: ${PORT}`);
-});
-
 app.use('/', mainRouter);
 app.use('/game', gameRouter);
 app.use('/room', roomRouter);
+
+chat(io);
+
+server.listen(PORT, () => {
+    logger.info(`Server is listening on port: ${PORT}`);
+});
