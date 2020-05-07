@@ -9,6 +9,7 @@ const router = express.Router();
 let GUESSER_POINTS: number;
 let HOLDER_POINTS: number;
 
+
 if (process.env.GUESSER_POINTS) GUESSER_POINTS = Number(process.env.GUESSER_POINTS);
 if (process.env.HOLDER_POINTS) HOLDER_POINTS = Number(process.env.HOLDER_POINTS);
 else if (!process.env.GUESSER_POINTS) {
@@ -104,6 +105,12 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
 
     const previousPassword = game.password || '';
 
+    const date: Date = new Date();
+    const time = date.getTime();
+    const DURATION = parseInt(process.env.DURATION, 10) || 60;
+
+    game.time.start = time;
+    game.time.end = time + (DURATION * 1000);
     game.password = password;
     game.passwordHolder = nextPasswordHolder.username;
     game.usedPasswords.push(password);
@@ -149,6 +156,11 @@ router.post('/attempt', async (req: express.Request, res: express.Response) => {
         return;
     }
 
+    const date: Date = new Date();
+    if (date.getTime() > game.time.end) {
+        res.json({ success: true, message: messages.timeOver });
+        return;
+    }
     if (password !== game.password) {
         res.json({ success: true, message: messages.incorrect });
         return;

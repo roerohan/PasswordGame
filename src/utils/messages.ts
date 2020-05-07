@@ -16,4 +16,5 @@ export default {
     usernameAlreadyExists: 'usernameAlreadyExists',
     usernameInvalid: 'usernameInvalid',
     noRooms: 'noRooms',
+    timeOver: 'timeOver',
 };
