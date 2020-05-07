@@ -203,6 +203,56 @@ router.post('/attempt', async (req: express.Request, res: express.Response) => {
     });
 });
 
+
+router.post('/hint', async (req: express.Request, res: express.Response) => {
+    const {
+        roomId,
+        username,
+        hint,
+    } = req.body;
+
+    if (!username) {
+        res.json({ success: false, message: messages.userNotFound });
+        return;
+    }
+
+    const game = await Game.findOne({ roomId });
+
+    if (!game) {
+        res.json({ success: false, message: messages.gameNotFound });
+        return;
+    }
+    if (!game.hasStarted) {
+        res.json({ success: false, message: messages.gameNotStarted });
+        return;
+    }
+
+    const date: Date = new Date();
+    if (date.getTime() > game.time.end) {
+        res.json({ success: true, message: messages.timeOver });
+        return;
+    }
+
+    if (username !== game.passwordHolder) {
+        res.json({ success: false, message: messages.userNotFound });
+        return;
+    }
+
+    game.hints.push(hint);
+    game.markModified('hints');
+
+    await game.save();
+
+    res.json({
+        success: true,
+        message: {
+            hints: game.hints,
+            passwordHolder: game.passwordHolder,
+        },
+    });
+});
+
+
 router.post('/end', async (req: express.Request, res: express.Response) => {
     const { roomId } = req.body;
 
