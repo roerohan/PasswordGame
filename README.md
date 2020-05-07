@@ -142,6 +142,19 @@ Frontend Repo: https://github.com/ashikka/Password
 }
 ```
 
+- `POST /game/hint - roomId, username, hint`
+    * Adds the hint to the `hints` array for the current round.
+    * Returns a JSON of the format:
+```typescript
+{
+    success: boolean,
+    message: {
+        hints: array,
+        passwordHolder: string,
+    },
+}
+``
+
 - `POST /game/end - roomId`
     * Ends the game for `roomId`.
     * Deletes data pertaining to `roomId`.
