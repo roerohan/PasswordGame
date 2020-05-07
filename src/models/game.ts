@@ -57,7 +57,6 @@ export default new mongoose.Schema({
     }),
     hints: {
         type: [String],
-        required: true,
     },
 });
 
