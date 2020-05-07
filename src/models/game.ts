@@ -55,8 +55,8 @@ export default new mongoose.Schema({
             required: true,
         },
     }),
-    hint: {
-        type: String,
+    hints: {
+        type: [String],
         required: true,
     },
 });
@@ -74,5 +74,5 @@ export interface GameInterface extends mongoose.Document {
     solvedBy: Array<string>;
     creator: string;
     time: {start: number, end: number};
-    hint: string;
+    hints: Array<string>;
 }
