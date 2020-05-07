@@ -27,6 +27,8 @@
   "homepage": "https://github.com/roerohan/PasswordGame#readme",
   "devDependencies": {
     "@types/express": "^4.17.6",
+    "@types/mongoose": "^5.7.14",
+    "@types/socket.io": "^2.1.4",
     "@typescript-eslint/eslint-plugin": "^2.30.0",
     "@typescript-eslint/parser": "^2.30.0",
     "eslint": "^6.8.0",
@@ -34,7 +36,6 @@
     "eslint-plugin-import": "^2.20.2",
     "husky": "^4.2.5",
     "ts-node": "^8.9.1",
-    "@types/mongoose": "^5.7.14",
     "typescript": "^3.8.3"
   },
   "dependencies": {
@@ -43,6 +44,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mongoose": "^5.9.11",
+    "socket.io": "^2.3.0",
     "winston": "^3.2.1"
   }
 }
