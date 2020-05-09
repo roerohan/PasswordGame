@@ -48,7 +48,7 @@ router.post('/create', async (req: express.Request, res: express.Response) => {
     });
 });
 
-router.get('/join/:roomId?*', async (req: express.Request, res: express.Response) => {
+router.get('/join/:roomId?', async (req: express.Request, res: express.Response) => {
     const { username } = req.query;
     let { roomId } = req.params;
 
