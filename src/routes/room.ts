@@ -101,6 +101,7 @@ router.get('/join/:roomId?', async (req: express.Request, res: express.Response)
             roomId,
             players: game.players,
             creator: game.creator,
+            hasStarted: game.hasStarted,
         },
     });
 });
