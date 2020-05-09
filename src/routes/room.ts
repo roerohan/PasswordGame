@@ -48,12 +48,12 @@ router.post('/create', async (req: express.Request, res: express.Response) => {
     });
 });
 
-router.get('/join/:roomId', async (req: express.Request, res: express.Response) => {
+router.get('/join/:roomId?', async (req: express.Request, res: express.Response) => {
     const { username } = req.query;
     let { roomId } = req.params;
 
     if (!roomId) {
-        const n: number = await Game.count({ access: 'public' });
+        const n: number = await Game.countDocuments({ access: 'public' });
 
         if (!n) {
             res.json({ success: false, message: messages.noRooms });
@@ -101,6 +101,7 @@ router.get('/join/:roomId', async (req: express.Request, res: express.Response) 
             roomId,
             players: game.players,
             creator: game.creator,
+            hasStarted: game.hasStarted,
         },
     });
 });
