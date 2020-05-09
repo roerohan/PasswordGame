@@ -49,7 +49,7 @@ Frontend Repo: https://github.com/ashikka/Password
     message: {
         roomId: string,
         creator: string,
-        hasStarted: string,
+        hasStarted: boolean,
         players: [
             {
                 username: string,
