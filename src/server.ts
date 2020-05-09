@@ -3,6 +3,7 @@ import http from 'http';
 import socketio from 'socket.io';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
 import mainRouter from './routes/mainRouter';
 import gameRouter from './routes/game';
@@ -16,6 +17,10 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 const PORT = process.env.PORT || '3000';
+
+if (process.env.NODE_ENV === 'dev') {
+    app.use(cors());
+}
 
 app.use(bodyParser.urlencoded({
     extended: true,
