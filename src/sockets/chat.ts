@@ -41,6 +41,7 @@ async function onJoin(
     io.of(namespace).in(roomId).emit('message', {
         username,
         message: messages.joinedRoom,
+        time: new Date(),
     });
 }
 
@@ -55,7 +56,7 @@ async function onMessage(
     const chat = await Chat.findOne({ roomId });
 
     if (!chat) {
-        socket.emit('error', { message: messages.noRooms });
+        socket.emit('err', { message: messages.noRooms });
         return;
     }
 
@@ -71,6 +72,7 @@ async function onMessage(
     io.of(namespace).in(roomId).emit('message', {
         username,
         message,
+        time: new Date(),
     });
 }
 
@@ -84,6 +86,7 @@ function onDisconnect(
     io.of(namespace).in(roomId).emit('message', {
         username,
         message: messages.disconnected,
+        time: new Date(),
     });
 }
 
@@ -93,6 +96,7 @@ export default function chatSockets(io: socketio.Server) {
         logger.info(`Connected ${socket.id}`);
 
         socket.on('join', async (data) => {
+            logger.info('Joined room.');
             await onJoin(socket, data, io, namespace);
         });
 
@@ -101,6 +105,7 @@ export default function chatSockets(io: socketio.Server) {
         });
 
         socket.on('disconnect', (data) => {
+            logger.info('Disconnected');
             onDisconnect(data, io, namespace);
         });
     });
