@@ -49,6 +49,7 @@ Frontend Repo: https://github.com/ashikka/Password
     message: {
         roomId: string,
         creator: string,
+        hasStarted: string,
         players: [
             {
                 username: string,
