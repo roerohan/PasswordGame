@@ -61,7 +61,7 @@ async function onMessage(
 
     const msg = new Message({
         username,
-        message: messages.joinedRoom,
+        message,
     });
 
     chat.messages.push(msg);
