@@ -32,7 +32,10 @@ async function onJoin(
 
         await newChat.save();
     } else {
-        chat.messages.push(message);
+        chat.messages.push(
+
+
+        );
         chat.markModified('messages');
         await chat.save();
     }
@@ -52,6 +55,8 @@ async function onMessage(
     namespace: string,
 ) {
     const { roomId, username, message } = data;
+
+    if (!message) return;
 
     const chat = await Chat.findOne({ roomId });
 
