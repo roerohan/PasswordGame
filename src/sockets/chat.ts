@@ -95,18 +95,19 @@ async function onDisconnect(
     namespace: string,
 ) {
     const chat = await Chat.findOne({ online: { $elemMatch: { socketId: socket.id } } });
+    const { roomId } = chat;
     const online = chat.online.find((obj) => (obj.socketId === socket.id));
     const { username } = online;
-    const newonline = chat.online.filter((obj) => (obj.socketId !== socket.id));
-    chat.online = newonline;
-    await chat.save();
-    const game = await Game.findOne({ players: { $elemMatch: { username } } });
-    const newplayers = game.players.filter((player) => (player.username !== username));
+    chat.online = chat.online.filter((obj) => (obj.socketId !== socket.id));
+    chat.markModified('online');
+    const game = await Game.findOne({ roomId });
+    game.players = game.players.filter((player) => (player.username !== username));
     if (game.creator === username) {
-        game.creator = newplayers[0].username;
+        game.creator = game.players[0].username;
     }
-    game.players = newplayers;
-    await game.save();
+    game.markModified('players');
+    game.markModified('creator');
+    await Promise.all([chat.save(), game.save()]);
     io.of(namespace).in(chat.roomId).emit('message', {
         username,
         message: messages.disconnected,
