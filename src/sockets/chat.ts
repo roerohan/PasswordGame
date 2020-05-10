@@ -32,10 +32,7 @@ async function onJoin(
 
         await newChat.save();
     } else {
-        chat.messages.push(
-
-
-        );
+        chat.messages.push(message);
         chat.markModified('messages');
         await chat.save();
     }
