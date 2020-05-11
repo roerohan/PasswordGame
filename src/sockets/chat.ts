@@ -125,7 +125,7 @@ async function onDisconnect(
 }
 
 export default function chatSockets(io: socketio.Server) {
-    const namespace = '/chat';
+    const namespace = '';
     io.of(namespace).on('connection', (socket: socketio.Socket) => {
         logger.info(`Connected ${socket.id}`);
 
