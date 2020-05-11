@@ -8,7 +8,7 @@ import cors from 'cors';
 import mainRouter from './routes/mainRouter';
 import gameRouter from './routes/game';
 import roomRouter from './routes/room';
-import chat from './sockets/chat';
+import socketHandler from './sockets/handler';
 import logger from './utils/logger';
 
 dotenv.config();
@@ -31,7 +31,7 @@ app.use('/', mainRouter);
 app.use('/game', gameRouter);
 app.use('/room', roomRouter);
 
-chat(io);
+socketHandler(io);
 
 server.listen(PORT, () => {
     logger.info(`Server is listening on port: ${PORT}`);
