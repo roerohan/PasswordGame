@@ -1,6 +1,8 @@
 import socketio from 'socket.io';
 import logger from '../utils/logger';
-import { Chat, Message, Game } from '../models/models';
+import {
+    Chat, Message, Game, Online,
+} from '../models/models';
 import messages from '../utils/messages';
 
 async function onJoin(
@@ -18,6 +20,12 @@ async function onJoin(
         message: messages.joinedRoom,
     });
 
+    const online = new Online({
+        socketId: socket.id,
+        username,
+
+    });
+
     if (!chat) {
         const game = await Game.findOne({ roomId });
 
@@ -28,12 +36,15 @@ async function onJoin(
         const newChat = new Chat({
             roomId,
             messages: [message],
+            online: [online],
         });
 
         await newChat.save();
     } else {
         chat.messages.push(message);
         chat.markModified('messages');
+        chat.online.push(online);
+        chat.markModified('online');
         await chat.save();
     }
 
@@ -78,14 +89,26 @@ async function onMessage(
     });
 }
 
-function onDisconnect(
-    data: { roomId: string, username: string },
+async function onDisconnect(
+    socket: socketio.Socket,
     io: socketio.Server,
     namespace: string,
 ) {
-    const { roomId, username } = data;
-
-    io.of(namespace).in(roomId).emit('message', {
+    const chat = await Chat.findOne({ online: { $elemMatch: { socketId: socket.id } } });
+    const { roomId } = chat;
+    const online = chat.online.find((obj) => (obj.socketId === socket.id));
+    const { username } = online;
+    chat.online = chat.online.filter((obj) => (obj.socketId !== socket.id));
+    chat.markModified('online');
+    const game = await Game.findOne({ roomId });
+    game.players = game.players.filter((player) => (player.username !== username));
+    if (game.creator === username) {
+        game.creator = game.players[0].username;
+    }
+    game.markModified('players');
+    game.markModified('creator');
+    await Promise.all([chat.save(), game.save()]);
+    io.of(namespace).in(chat.roomId).emit('message', {
         username,
         message: messages.disconnected,
         time: new Date(),
@@ -106,9 +129,9 @@ export default function chatSockets(io: socketio.Server) {
             onMessage(socket, data, io, namespace);
         });
 
-        socket.on('disconnect', (data) => {
+        socket.on('disconnect', () => {
             logger.info('Disconnected');
-            onDisconnect(data, io, namespace);
+            onDisconnect(socket, io, namespace);
         });
     });
 }
