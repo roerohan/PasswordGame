@@ -1,11 +1,10 @@
 import socketio from 'socket.io';
-import logger from '../utils/logger';
 import {
     Chat, Message, Game, Online,
 } from '../models/models';
 import messages from '../utils/messages';
 
-async function onJoin(
+export async function onJoin(
     socket: socketio.Socket,
     data: { roomId: string, username: String },
     io: socketio.Server,
@@ -55,7 +54,7 @@ async function onJoin(
     });
 }
 
-async function onMessage(
+export async function onMessage(
     socket: socketio.Socket,
     data: { roomId: string, username: string, message: string },
     io: socketio.Server,
@@ -88,59 +87,33 @@ async function onMessage(
     });
 }
 
-async function onDisconnect(
+export async function onDisconnect(
     socket: socketio.Socket,
     io: socketio.Server,
     namespace: string,
 ) {
     const chat = await Chat.findOne({ online: { $elemMatch: { socketId: socket.id } } });
     if (!chat) {
-        return;
+        return { roomId: '', username: '' };
     }
 
     const { roomId } = chat;
 
     const { username } = chat.online.find((obj) => (obj.socketId === socket.id));
     chat.online = chat.online.filter((obj) => (obj.socketId !== socket.id));
+
+    if (chat.online.length === 0) {
+        await chat.remove();
+        return { roomId, username };
+    }
     chat.markModified('online');
+    await chat.save();
 
-    const game = await Game.findOne({ roomId });
-    game.players = game.players.filter((player) => (player.username !== username));
-    if (game.players.length === 0) {
-        await Promise.all([game.remove(), chat.remove()]);
-        return;
-    }
-    if (game.creator === username) {
-        game.creator = game.players[0].username;
-    }
-    game.markModified('players');
-
-    await Promise.all([chat.save(), game.save()]);
-
-    io.of(namespace).in(chat.roomId).emit('message', {
+    io.of(namespace).in(roomId).emit('message', {
         username,
         message: messages.disconnected,
         time: new Date(),
     });
-}
 
-export default function chatSockets(io: socketio.Server) {
-    const namespace = '';
-    io.of(namespace).on('connection', (socket: socketio.Socket) => {
-        logger.info(`Connected ${socket.id}`);
-
-        socket.on('join', async (data) => {
-            logger.info('Joined room.');
-            await onJoin(socket, data, io, namespace);
-        });
-
-        socket.on('message', async (data) => {
-            onMessage(socket, data, io, namespace);
-        });
-
-        socket.on('disconnect', () => {
-            logger.info('Disconnected');
-            onDisconnect(socket, io, namespace);
-        });
-    });
+    return { roomId, username };
 }
