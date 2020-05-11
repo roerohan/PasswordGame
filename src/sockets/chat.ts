@@ -23,7 +23,6 @@ async function onJoin(
     const online = new Online({
         socketId: socket.id,
         username,
-
     });
 
     if (!chat) {
@@ -96,18 +95,20 @@ async function onDisconnect(
 ) {
     const chat = await Chat.findOne({ online: { $elemMatch: { socketId: socket.id } } });
     const { roomId } = chat;
-    const online = chat.online.find((obj) => (obj.socketId === socket.id));
-    const { username } = online;
+
+    const { username } = chat.online.find((obj) => (obj.socketId === socket.id));
     chat.online = chat.online.filter((obj) => (obj.socketId !== socket.id));
     chat.markModified('online');
+
     const game = await Game.findOne({ roomId });
     game.players = game.players.filter((player) => (player.username !== username));
     if (game.creator === username) {
         game.creator = game.players[0].username;
     }
     game.markModified('players');
-    game.markModified('creator');
+
     await Promise.all([chat.save(), game.save()]);
+
     io.of(namespace).in(chat.roomId).emit('message', {
         username,
         message: messages.disconnected,
