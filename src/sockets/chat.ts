@@ -94,6 +94,10 @@ async function onDisconnect(
     namespace: string,
 ) {
     const chat = await Chat.findOne({ online: { $elemMatch: { socketId: socket.id } } });
+    if (!chat) {
+        return;
+    }
+
     const { roomId } = chat;
 
     const { username } = chat.online.find((obj) => (obj.socketId === socket.id));
@@ -102,6 +106,10 @@ async function onDisconnect(
 
     const game = await Game.findOne({ roomId });
     game.players = game.players.filter((player) => (player.username !== username));
+    if (game.players.length === 0) {
+        await Promise.all([game.remove(), chat.remove()]);
+        return;
+    }
     if (game.creator === username) {
         game.creator = game.players[0].username;
     }
