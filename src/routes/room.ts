@@ -44,6 +44,7 @@ router.post('/create', async (req: express.Request, res: express.Response) => {
         message: {
             roomId,
             creator: username,
+            players: game.players,
         },
     });
 });
@@ -99,6 +100,7 @@ router.get('/join/:roomId?', async (req: express.Request, res: express.Response)
         success: true,
         message: {
             roomId,
+            player,
             players: game.players,
             creator: game.creator,
             hasStarted: game.hasStarted,
