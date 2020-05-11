@@ -1,9 +1,10 @@
 import socketio from 'socket.io';
-import logger from '../utils/logger';
-import { Chat, Message, Game } from '../models/models';
+import {
+    Chat, Message, Game, Online,
+} from '../models/models';
 import messages from '../utils/messages';
 
-async function onJoin(
+export async function onJoin(
     socket: socketio.Socket,
     data: { roomId: string, username: String },
     io: socketio.Server,
@@ -18,6 +19,11 @@ async function onJoin(
         message: messages.joinedRoom,
     });
 
+    const online = new Online({
+        socketId: socket.id,
+        username,
+    });
+
     if (!chat) {
         const game = await Game.findOne({ roomId });
 
@@ -28,12 +34,15 @@ async function onJoin(
         const newChat = new Chat({
             roomId,
             messages: [message],
+            online: [online],
         });
 
         await newChat.save();
     } else {
         chat.messages.push(message);
         chat.markModified('messages');
+        chat.online.push(online);
+        chat.markModified('online');
         await chat.save();
     }
 
@@ -45,13 +54,15 @@ async function onJoin(
     });
 }
 
-async function onMessage(
+export async function onMessage(
     socket: socketio.Socket,
     data: { roomId: string, username: string, message: string },
     io: socketio.Server,
     namespace: string,
 ) {
     const { roomId, username, message } = data;
+
+    if (!message) return;
 
     const chat = await Chat.findOne({ roomId });
 
@@ -76,37 +87,33 @@ async function onMessage(
     });
 }
 
-function onDisconnect(
-    data: { roomId: string, username: string },
+export async function onDisconnect(
+    socket: socketio.Socket,
     io: socketio.Server,
     namespace: string,
 ) {
-    const { roomId, username } = data;
+    const chat = await Chat.findOne({ online: { $elemMatch: { socketId: socket.id } } });
+    if (!chat) {
+        return { roomId: '', username: '' };
+    }
+
+    const { roomId } = chat;
+
+    const { username } = chat.online.find((obj) => (obj.socketId === socket.id));
+    chat.online = chat.online.filter((obj) => (obj.socketId !== socket.id));
+
+    if (chat.online.length === 0) {
+        await chat.remove();
+        return { roomId, username };
+    }
+    chat.markModified('online');
+    await chat.save();
 
     io.of(namespace).in(roomId).emit('message', {
         username,
         message: messages.disconnected,
         time: new Date(),
     });
-}
 
-export default function chatSockets(io: socketio.Server) {
-    const namespace = '/chat';
-    io.of(namespace).on('connection', (socket: socketio.Socket) => {
-        logger.info(`Connected ${socket.id}`);
-
-        socket.on('join', async (data) => {
-            logger.info('Joined room.');
-            await onJoin(socket, data, io, namespace);
-        });
-
-        socket.on('message', async (data) => {
-            onMessage(socket, data, io, namespace);
-        });
-
-        socket.on('disconnect', (data) => {
-            logger.info('Disconnected');
-            onDisconnect(data, io, namespace);
-        });
-    });
+    return { roomId, username };
 }
