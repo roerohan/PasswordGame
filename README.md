@@ -36,6 +36,12 @@ Frontend Repo: https://github.com/roerohan/Password
     message: {
         roomId: string,
         creator: string,
+        players: [
+            {
+                username: string,
+                points: number,
+            },
+        ],
     },
 }
 ```
@@ -50,14 +56,18 @@ Frontend Repo: https://github.com/roerohan/Password
         roomId: string,
         creator: string,
         hasStarted: boolean,
+        player: {
+            username: string,
+            points: 0,
+        }
         players: [
             {
                 username: string,
-                points: string,
+                points: number,
             },
             {
                 username: string,
-                points: string,
+                points: number,
             },
         ],
     },
@@ -81,11 +91,11 @@ Frontend Repo: https://github.com/roerohan/Password
         players: [
             {
                 username: string,
-                points: string,
+                points: number,
             },
             {
                 username: string,
-                points: string,
+                points: number,
             },
         ],
     },
@@ -106,11 +116,11 @@ Frontend Repo: https://github.com/roerohan/Password
         players: [
             {
                 username: string,
-                points: string,
+                points: number,
             },
             {
                 username: string,
-                points: string,
+                points: number,
             },
         ],
     },
@@ -132,11 +142,11 @@ Frontend Repo: https://github.com/roerohan/Password
         players: [
             {
                 username: string,
-                points: string,
+                points: number,
             },
             {
                 username: string,
-                points: string,
+                points: number,
             },
         ],
     },
@@ -168,11 +178,11 @@ Frontend Repo: https://github.com/roerohan/Password
         players: [
             {
                 username: string,
-                points: string,
+                points: number,
             },
             {
                 username: string,
-                points: string,
+                points: number,
             },
         ],
     },
