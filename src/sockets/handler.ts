@@ -19,7 +19,7 @@ export default function socketHandler(io: socketio.Server) {
         logger.info(`Connected ${socket.id}`);
 
         socket.on('join', async (data) => {
-            logger.info('Joined room.');
+            logger.info(`${socket.id} Joined room ${data.roomId}`);
             await onJoin(socket, data, io, namespace);
             joinGame(data, io, namespace);
         });
@@ -33,7 +33,7 @@ export default function socketHandler(io: socketio.Server) {
         });
 
         socket.on('disconnect', async () => {
-            logger.info('Disconnected');
+            logger.info(`Disconnected ${socket.id}`);
             const data = await onDisconnect(socket, io, namespace);
             await disconnectGame(data, io, namespace);
         });
