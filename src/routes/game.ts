@@ -66,7 +66,7 @@ router.post('/start', async (req: express.Request, res: express.Response) => {
 
 
 router.post('/next', async (req: express.Request, res: express.Response) => {
-    const { roomId } = req.body;
+    const { roomId, username } = req.body;
 
     const game = await Game.findOne({ roomId });
 
@@ -79,10 +79,15 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
         return;
     }
 
+    if (!game.players.find((player) => player.username === username)) {
+        res.json({ success: false, message: messages.userNotFound });
+        return;
+    }
+
     const { passwordHolder } = game;
 
     const playerIndex = passwordHolder
-        ? game.players.findIndex((player) => player.username === passwordHolder) : 0;
+        ? game.players.findIndex((player) => player.username === passwordHolder) : -1;
 
     let nextPasswordHolder;
     if (playerIndex === game.players.length - 1) {
@@ -130,6 +135,7 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
             passwordHolder: nextPasswordHolder,
             passwordLength: password.length,
             previousPassword,
+            roundEnd: game.time.end,
         },
     });
 });
