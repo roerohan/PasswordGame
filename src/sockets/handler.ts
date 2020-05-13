@@ -11,6 +11,7 @@ import {
     onStart,
     onJoin as joinGame,
     onDisconnect as disconnectGame,
+    onHint,
 } from './game';
 
 export default function socketHandler(io: socketio.Server) {
@@ -30,6 +31,10 @@ export default function socketHandler(io: socketio.Server) {
 
         socket.on('start', async (data) => {
             await onStart(data, io, namespace);
+        });
+
+        socket.on('hint', async (data) => {
+            await onHint(data, io, namespace);
         });
 
         socket.on('disconnect', async () => {

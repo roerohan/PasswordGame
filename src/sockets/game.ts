@@ -41,6 +41,23 @@ export function onJoin(
     });
 }
 
+export async function onHint(
+    data: { roomId: string, username: string },
+    io: socketio.Server,
+    namespace: string,
+) {
+    const { roomId, username } = data;
+
+    if (!roomId || !username) return;
+
+    const { hints, passwordHolder } = await Game.findOne({ roomId });
+
+    if (username !== passwordHolder) return;
+
+    io.of(namespace).in(roomId).emit('hint', { hints, passwordHolder });
+}
+
+
 export async function onDisconnect(
     data: { roomId: string, username: string },
     io: socketio.Server,
