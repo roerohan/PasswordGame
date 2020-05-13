@@ -102,7 +102,7 @@ Frontend Repo: https://github.com/roerohan/Password
 }
 ```
 
-- `POST /game/next - roomId`
+- `POST /game/next - roomId, username`
     * Generates a new password in the backend for the room, returns the new passwordHolder and the length of the new password.
     * Returns a JSON of the following format:
 ```typescript
