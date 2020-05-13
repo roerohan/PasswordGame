@@ -83,6 +83,21 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
         res.json({ success: false, message: messages.userNotFound });
         return;
     }
+    if (game.time.end > new Date().getTime()) {
+        const previousPassword = game.usedPasswords.length > 1 ? game.usedPasswords.slice(-2)[0] : '';
+        res.json({
+            success: true,
+            message: {
+                players: game.players,
+                currentRound: game.currentRound,
+                passwordHolder: game.passwordHolder,
+                passwordLength: game.password.length,
+                previousPassword,
+                roundEnd: game.time.end,
+            },
+        });
+        return;
+    }
 
     const { passwordHolder } = game;
 
@@ -132,7 +147,7 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
         message: {
             players: game.players,
             currentRound: game.currentRound,
-            passwordHolder: nextPasswordHolder,
+            passwordHolder: nextPasswordHolder.username,
             passwordLength: password.length,
             previousPassword,
             roundEnd: game.time.end,
