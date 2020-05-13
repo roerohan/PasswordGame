@@ -22,6 +22,7 @@ export async function onStart(
 
     io.of(namespace).in(roomId).emit('start', {
         hasStarted: true,
+        roomId,
     });
 }
 
