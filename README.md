@@ -113,6 +113,7 @@ Frontend Repo: https://github.com/roerohan/Password
         passwordHolder: string,
         passwordLength: number,
         previousPassword: string,
+        roundEnd: number,
         players: [
             {
                 username: string,
