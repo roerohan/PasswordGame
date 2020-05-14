@@ -245,7 +245,7 @@ router.post('/hint', async (req: express.Request, res: express.Response) => {
 
     const date: Date = new Date();
     if (date.getTime() > game.time.end) {
-        res.json({ success: true, message: messages.timeOver });
+        res.json({ success: false, message: messages.timeOver });
         return;
     }
 
