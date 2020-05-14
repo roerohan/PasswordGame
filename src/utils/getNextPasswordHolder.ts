@@ -8,7 +8,7 @@ export default function getNextPasswordHolder(passwordHolder: string, game: Game
     let { currentRound } = game;
     if (playerIndex === game.players.length - 1) {
         [nextPasswordHolder] = game.players;
-        currentRound = game.currentRound + 1;
+        currentRound += 1;
     } else {
         nextPasswordHolder = game.players[playerIndex + 1];
     }
