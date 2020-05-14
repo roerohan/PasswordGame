@@ -4,8 +4,8 @@ export default function getNextPasswordHolder(passwordHolder: string, game: Game
     const playerIndex = passwordHolder
         ? game.players.findIndex((player) => player.username === passwordHolder) : -1;
 
-    let nextPasswordHolder; let
-        currentRound;
+    let nextPasswordHolder;
+    let { currentRound } = game;
     if (playerIndex === game.players.length - 1) {
         [nextPasswordHolder] = game.players;
         currentRound = game.currentRound + 1;
