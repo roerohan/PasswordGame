@@ -22,6 +22,7 @@ export async function onStart(
 
     io.of(namespace).in(roomId).emit('start', {
         hasStarted: true,
+        roomId,
     });
 }
 
@@ -40,6 +41,23 @@ export function onJoin(
         players,
     });
 }
+
+export async function onHint(
+    data: { roomId: string, username: string },
+    io: socketio.Server,
+    namespace: string,
+) {
+    const { roomId, username } = data;
+
+    if (!roomId || !username) return;
+
+    const { hints, passwordHolder } = await Game.findOne({ roomId });
+
+    if (username !== passwordHolder) return;
+
+    io.of(namespace).in(roomId).emit('hint', { hints, passwordHolder });
+}
+
 
 export async function onDisconnect(
     data: { roomId: string, username: string },
@@ -60,6 +78,10 @@ export async function onDisconnect(
     if (game.creator === username) {
         game.creator = game.players[0].username;
     }
+    const { passwordHolder } = game;
+    if (game.passwordHolder === username) {
+        io.of(namespace).in(roomId).emit('next');
+    }
     game.markModified('players');
 
     await game.save();
@@ -67,5 +89,6 @@ export async function onDisconnect(
     io.of(namespace).in(roomId).emit('disconnect', {
         username,
         creator: game.creator,
+        passwordHolder,
     });
 }

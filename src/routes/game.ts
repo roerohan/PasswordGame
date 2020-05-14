@@ -3,6 +3,7 @@ import express from 'express';
 import { Game } from '../models/models';
 import wordGenerator from '../utils/wordGenerator';
 import messages from '../utils/messages';
+import getNextPasswordHolder from '../utils/getNextPasswordHolder';
 
 const router = express.Router();
 
@@ -66,7 +67,7 @@ router.post('/start', async (req: express.Request, res: express.Response) => {
 
 
 router.post('/next', async (req: express.Request, res: express.Response) => {
-    const { roomId } = req.body;
+    const { roomId, username } = req.body;
 
     const game = await Game.findOne({ roomId });
 
@@ -79,18 +80,30 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
         return;
     }
 
+    if (!game.players.find((player) => player.username === username)) {
+        res.json({ success: false, message: messages.userNotFound });
+        return;
+    }
+    if (game.time.end > new Date().getTime()) {
+        const previousPassword = game.usedPasswords.length > 1 ? game.usedPasswords.slice(-2)[0] : '';
+        res.json({
+            success: true,
+            message: {
+                players: game.players,
+                currentRound: game.currentRound,
+                passwordHolder: game.passwordHolder,
+                passwordLength: game.password.length,
+                previousPassword,
+                roundEnd: game.time.end,
+            },
+        });
+        return;
+    }
+
     const { passwordHolder } = game;
 
-    const playerIndex = passwordHolder
-        ? game.players.findIndex((player) => player.username === passwordHolder) : 0;
-
-    let nextPasswordHolder;
-    if (playerIndex === game.players.length - 1) {
-        [nextPasswordHolder] = game.players;
-        game.currentRound += 1;
-    } else {
-        nextPasswordHolder = game.players[playerIndex + 1];
-    }
+    const { nextPasswordHolder, currentRound } = getNextPasswordHolder(passwordHolder, game);
+    game.currentRound = currentRound;
 
     if (game.currentRound > game.rounds) {
         res.json({ success: false, message: messages.gameEnded });
@@ -112,7 +125,7 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
     game.time.start = time;
     game.time.end = time + (DURATION * 1000);
     game.password = password;
-    game.passwordHolder = nextPasswordHolder.username;
+    game.passwordHolder = nextPasswordHolder;
     game.usedPasswords.push(password);
     game.markModified('usedPasswords');
     game.solvedBy = [];
@@ -130,6 +143,7 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
             passwordHolder: nextPasswordHolder,
             passwordLength: password.length,
             previousPassword,
+            roundEnd: game.time.end,
         },
     });
 });

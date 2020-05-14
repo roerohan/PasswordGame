@@ -45,16 +45,20 @@ export default new mongoose.Schema({
         type: String,
         required: true,
     },
-    time: new mongoose.Schema({
-        start: {
-            type: String,
-            required: true,
-        },
-        end: {
-            type: String,
-            required: true,
-        },
-    }),
+    time:
+    {
+        type: new mongoose.Schema({
+            start: {
+                type: Number,
+                required: true,
+            },
+            end: {
+                type: Number,
+                required: true,
+            },
+        }),
+        default: { start: new Date().getTime(), end: new Date().getTime() },
+    },
     hints: [String],
 });
 
@@ -70,6 +74,6 @@ export interface GameInterface extends mongoose.Document {
     usedPasswords: Array<string>;
     solvedBy: Array<string>;
     creator: string;
-    time: {start: number, end: number};
+    time: { start: number, end: number };
     hints: Array<string>;
 }
