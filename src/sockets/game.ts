@@ -78,6 +78,10 @@ export async function onDisconnect(
     if (game.creator === username) {
         game.creator = game.players[0].username;
     }
+    const { passwordHolder } = game;
+    if (game.passwordHolder === username) {
+        io.of(namespace).in(roomId).emit('next');
+    }
     game.markModified('players');
 
     await game.save();
@@ -85,5 +89,6 @@ export async function onDisconnect(
     io.of(namespace).in(roomId).emit('disconnect', {
         username,
         creator: game.creator,
+        passwordHolder,
     });
 }
