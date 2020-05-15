@@ -7,8 +7,6 @@ import getNextPasswordHolder from '../utils/getNextPasswordHolder';
 
 const router = express.Router();
 
-const GUESSER_POINTS: number = process.env.GUESSER_POINTS ? Number(process.env.GUESSER_POINTS) : 50;
-const HOLDER_POINTS: number = process.env.HOLDER_POINTS ? Number(process.env.HOLDER_POINTS) : 100;
 const MAX_HINTS: number = process.env.MAX_HINTS ? Number(process.env.MAX_HINTS) : 4;
 
 
@@ -146,77 +144,6 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
             currentPassword,
             hints: game.hints,
             roundEnd: game.time.end,
-        },
-    });
-});
-
-
-router.post('/attempt', async (req: express.Request, res: express.Response) => {
-    const {
-        roomId,
-        username,
-        password,
-    } = req.body;
-
-    if (!username) {
-        res.json({ success: false, message: messages.userNotFound });
-        return;
-    }
-
-    const game = await Game.findOne({ roomId });
-
-    if (!game) {
-        res.json({ success: false, message: messages.gameNotFound });
-        return;
-    }
-    if (!game.hasStarted) {
-        res.json({ success: false, message: messages.gameNotStarted });
-        return;
-    }
-
-    const date: Date = new Date();
-    if (date.getTime() > game.time.end) {
-        res.json({ success: true, message: messages.timeOver });
-        return;
-    }
-
-    if (password !== game.password) {
-        res.json({ success: true, message: messages.incorrect });
-        return;
-    }
-
-    if (username === game.passwordHolder) {
-        res.json({ success: false, message: messages.serverError });
-        return;
-    }
-
-    if (game.solvedBy.includes(username)) {
-        res.json({ success: false, message: messages.alreadySolved });
-        return;
-    }
-
-    game.solvedBy.push(username);
-    game.markModified('solvedBy');
-
-    game.players = game.players.map((p) => {
-        const play = p;
-        if (play.username === username) {
-            play.points += GUESSER_POINTS;
-        } else if (play.username === game.passwordHolder) {
-            play.points += HOLDER_POINTS;
-        }
-        return play;
-    });
-
-    await game.save();
-
-    res.json({
-        success: true,
-        message: {
-            players: game.players,
-            currentRound: game.currentRound,
-            passwordHolder: game.passwordHolder,
-            solvedBy: game.solvedBy,
         },
     });
 });
