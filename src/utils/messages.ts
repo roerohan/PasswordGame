@@ -7,6 +7,7 @@ export default {
     noPlayers: 'noPlayers',
     incorrect: 'incorrect',
     correct: 'correct',
+    maxHints: 'maxHints',
     roomCreated: 'roomCreated',
     playerAdded: 'playerAdded',
     userNotFound: 'userNotFound',

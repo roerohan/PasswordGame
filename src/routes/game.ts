@@ -7,16 +7,10 @@ import getNextPasswordHolder from '../utils/getNextPasswordHolder';
 
 const router = express.Router();
 
-let GUESSER_POINTS: number;
-let HOLDER_POINTS: number;
+const GUESSER_POINTS: number = process.env.GUESSER_POINTS ? Number(process.env.GUESSER_POINTS) : 50;
+const HOLDER_POINTS: number = process.env.HOLDER_POINTS ? Number(process.env.HOLDER_POINTS) : 100;
+const MAX_HINTS = process.env.MAX_HINTS ? Number(process.env.MAX_HINTS) : 4;
 
-
-if (process.env.GUESSER_POINTS) GUESSER_POINTS = Number(process.env.GUESSER_POINTS);
-if (process.env.HOLDER_POINTS) HOLDER_POINTS = Number(process.env.HOLDER_POINTS);
-else if (!process.env.GUESSER_POINTS) {
-    GUESSER_POINTS = 50;
-    HOLDER_POINTS = 100;
-}
 
 router.post('/start', async (req: express.Request, res: express.Response) => {
     const {
@@ -246,6 +240,11 @@ router.post('/hint', async (req: express.Request, res: express.Response) => {
     const date: Date = new Date();
     if (date.getTime() > game.time.end) {
         res.json({ success: false, message: messages.timeOver });
+        return;
+    }
+
+    if (game.hints.length >= MAX_HINTS) {
+        res.json({ success: false, message: messages.maxHints });
         return;
     }
 
