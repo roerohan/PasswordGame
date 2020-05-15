@@ -2,7 +2,7 @@ import { GameInterface } from '../models/game';
 import messages from './messages';
 
 const GUESSER_POINTS: number = process.env.GUESSER_POINTS ? Number(process.env.GUESSER_POINTS) : 50;
-const HOLDER_POINTS: number = process.env.HOLDER_POINTS ? Number(process.env.HOLDER_POINTS) : 100;
+const HOLDER_POINTS: number = process.env.HOLDER_POINTS ? Number(process.env.HOLDER_POINTS) : 50;
 
 export default function attempt(game: GameInterface, username: string, password: string) {
     const time = new Date().getTime();
