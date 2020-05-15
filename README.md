@@ -104,6 +104,7 @@ Frontend Repo: https://github.com/roerohan/Password
 
 - `POST /game/next - roomId, username`
     * Generates a new password in the backend for the room, returns the new passwordHolder and the length of the new password.
+    * `currentPassword` is sent only when the `username` is the same as the `passwordHolder`.
     * Returns a JSON of the following format:
 ```typescript
 {
@@ -113,6 +114,7 @@ Frontend Repo: https://github.com/roerohan/Password
         passwordHolder: string,
         passwordLength: number,
         previousPassword: string,
+        currentPassword: string,
         roundEnd: number,
         players: [
             {

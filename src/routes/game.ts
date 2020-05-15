@@ -80,6 +80,8 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
     }
     if (game.time.end > new Date().getTime()) {
         const previousPassword = game.usedPasswords.length > 1 ? game.usedPasswords.slice(-2)[0] : '';
+        const currentPassword = username === game.passwordHolder ? game.password : '';
+
         res.json({
             success: true,
             message: {
@@ -88,6 +90,7 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
                 passwordHolder: game.passwordHolder,
                 passwordLength: game.password.length,
                 previousPassword,
+                currentPassword,
                 roundEnd: game.time.end,
             },
         });
@@ -129,6 +132,8 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
 
     await game.save();
 
+    const currentPassword = username === game.passwordHolder ? game.password : '';
+
     res.json({
         success: true,
         message: {
@@ -137,6 +142,7 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
             passwordHolder: nextPasswordHolder,
             passwordLength: password.length,
             previousPassword,
+            currentPassword,
             roundEnd: game.time.end,
         },
     });
