@@ -253,6 +253,11 @@ router.post('/hint', async (req: express.Request, res: express.Response) => {
         return;
     }
 
+    if (hint === game.password) {
+        res.json({ success: false, message: messages.serverError });
+        return;
+    }
+
     game.hints.push(hint);
     game.markModified('hints');
 
