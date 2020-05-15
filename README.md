@@ -130,32 +130,6 @@ Frontend Repo: https://github.com/roerohan/Password
 }
 ```
 
-- `POST /game/attempt - roomId, username, password`
-    * Matches the requested `password` with the current password for the room `roomId`.
-    * If they don't match, returns `{ success: true, message: incorrect }`.
-    * Otherwise, adds user to list of solvers for the current password and awards the user with points.
-    * Returns a JSON of the format:
-```typescript
-{
-    success: boolean,
-    message: {
-        passwordHolder: string,
-        passwordLength: number,
-        solvedBy: string[],
-        players: [
-            {
-                username: string,
-                points: number,
-            },
-            {
-                username: string,
-                points: number,
-            },
-        ],
-    },
-}
-```
-
 - `POST /game/hint - roomId, username, hint`
     * Adds the hint to the `hints` array for the current round.
     * Returns a JSON of the format:
