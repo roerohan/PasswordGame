@@ -30,7 +30,7 @@ export default function attempt(game: GameInterface, username: string, password:
     const noOfHints = game.hints.length === 0 ? 1 : game.hints.length;
 
     const timeDiff = game.time.end - time;
-    const factor = (Math.sqrt(timeDiff) / 10000) / noOfHints;
+    const factor = (Math.sqrt(timeDiff / 10000)) / noOfHints;
     newGame.players = newGame.players.map((p) => {
         const play = p;
         if (play.username === username) {
