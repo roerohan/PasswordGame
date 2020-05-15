@@ -9,7 +9,7 @@ const router = express.Router();
 
 const GUESSER_POINTS: number = process.env.GUESSER_POINTS ? Number(process.env.GUESSER_POINTS) : 50;
 const HOLDER_POINTS: number = process.env.HOLDER_POINTS ? Number(process.env.HOLDER_POINTS) : 100;
-const MAX_HINTS = process.env.MAX_HINTS ? Number(process.env.MAX_HINTS) : 4;
+const MAX_HINTS: number = process.env.MAX_HINTS ? Number(process.env.MAX_HINTS) : 4;
 
 
 router.post('/start', async (req: express.Request, res: express.Response) => {
