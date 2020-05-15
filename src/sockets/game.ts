@@ -43,15 +43,15 @@ export function onJoin(
 }
 
 export async function onHint(
-    data: { roomId: string, username: string },
+    data: { roomId: string, username: string, hints: string[], passwordHolder: string },
     io: socketio.Server,
     namespace: string,
 ) {
-    const { roomId, username } = data;
+    const {
+        roomId, username, hints, passwordHolder,
+    } = data;
 
     if (!roomId || !username) return;
-
-    const { hints, passwordHolder } = await Game.findOne({ roomId });
 
     if (username !== passwordHolder) return;
 
