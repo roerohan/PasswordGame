@@ -5,7 +5,8 @@ const GUESSER_POINTS: number = process.env.GUESSER_POINTS ? Number(process.env.G
 const HOLDER_POINTS: number = process.env.HOLDER_POINTS ? Number(process.env.HOLDER_POINTS) : 100;
 
 export default function attempt(game: GameInterface, username: string, password: string) {
-    if (new Date().getTime() > game.time.end) {
+    const time = new Date().getTime();
+    if (time > game.time.end) {
         return { modified: false, message: messages.timeOver };
     }
 
@@ -26,12 +27,16 @@ export default function attempt(game: GameInterface, username: string, password:
     newGame.solvedBy.push(username);
     newGame.markModified('solvedBy');
 
+    const noOfHints = game.hints.length === 0 ? 1 : game.hints.length;
+
+    const timeDiff = game.time.end - time;
+    const factor = (Math.sqrt(timeDiff) / 10000) / noOfHints;
     newGame.players = newGame.players.map((p) => {
         const play = p;
         if (play.username === username) {
-            play.points += GUESSER_POINTS;
+            play.points += Math.floor(GUESSER_POINTS * factor);
         } else if (play.username === newGame.passwordHolder) {
-            play.points += HOLDER_POINTS;
+            play.points += Math.floor(HOLDER_POINTS * ((Math.PI ** 2 * factor) / 10));
         }
         return play;
     });
