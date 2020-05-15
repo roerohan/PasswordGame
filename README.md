@@ -165,3 +165,11 @@ Frontend Repo: https://github.com/roerohan/Password
     },
 }
 ```
+
+# Socket Events
+
+- join
+- message
+- start
+- hint
+- disconnect
