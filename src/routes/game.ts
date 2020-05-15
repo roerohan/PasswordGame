@@ -91,6 +91,7 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
                 passwordLength: game.password.length,
                 previousPassword,
                 currentPassword,
+                hints: game.hints,
                 roundEnd: game.time.end,
             },
         });
@@ -143,6 +144,7 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
             passwordLength: password.length,
             previousPassword,
             currentPassword,
+            hints: game.hints,
             roundEnd: game.time.end,
         },
     });
