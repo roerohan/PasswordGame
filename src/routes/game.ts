@@ -1,7 +1,7 @@
 import express from 'express';
 
 import { Game } from '../models/models';
-import wordGenerator from '../utils/wordGenerator';
+import wordGenerator, { words } from '../utils/wordGenerator';
 import messages from '../utils/messages';
 import getNextPasswordHolder from '../utils/getNextPasswordHolder';
 
@@ -76,7 +76,8 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
         res.json({ success: false, message: messages.userNotFound });
         return;
     }
-    if (game.time.end > new Date().getTime()) {
+    if (game.solvedBy.length !== (game.players.length - 1)
+        && new Date().getTime() < game.time.end) {
         const previousPassword = game.usedPasswords.length > 1 ? game.usedPasswords.slice(-2)[0] : '';
         const currentPassword = username === game.passwordHolder ? game.password : '';
 
@@ -108,8 +109,10 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
 
     let password = wordGenerator();
 
-    while (game.usedPasswords.includes(password)) {
-        password = wordGenerator();
+    if (words.length > game.usedPasswords.length) {
+        while (game.usedPasswords.includes(password)) {
+            password = wordGenerator();
+        }
     }
 
     const previousPassword = game.password || '';
