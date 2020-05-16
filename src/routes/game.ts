@@ -7,8 +7,8 @@ import getNextPasswordHolder from '../utils/getNextPasswordHolder';
 
 const router = express.Router();
 
-const MAX_HINTS: number = process.env.MAX_HINTS ? Number(process.env.MAX_HINTS) : 4;
-
+const MAX_HINTS = process.env.MAX_HINTS ? Number(process.env.MAX_HINTS) : 4;
+const MAX_HINT_LENGTH = process.env.MAX_HINT_LENGTH ? Number(process.env.MAX_HINT_LENGTH) : 25;
 
 router.post('/start', async (req: express.Request, res: express.Response) => {
     const {
@@ -40,8 +40,13 @@ router.post('/start', async (req: express.Request, res: express.Response) => {
         return;
     }
 
-    game.access = access || game.access;
-    game.rounds = rounds || game.rounds;
+    if (rounds && rounds < 10 && rounds > 0) {
+        game.rounds = rounds;
+    }
+
+    if (access && ['public', 'private'].includes(access)) {
+        game.access = access;
+    }
 
     game.hasStarted = true;
     await game.save();
@@ -86,6 +91,7 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
             message: {
                 players: game.players,
                 currentRound: game.currentRound,
+                rounds: game.rounds,
                 passwordHolder: game.passwordHolder,
                 passwordLength: game.password.length,
                 previousPassword,
@@ -141,6 +147,7 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
         message: {
             players: game.players,
             currentRound: game.currentRound,
+            rounds: game.rounds,
             passwordHolder: nextPasswordHolder,
             passwordLength: password.length,
             previousPassword,
@@ -184,6 +191,10 @@ router.post('/hint', async (req: express.Request, res: express.Response) => {
     if (game.hints.length >= MAX_HINTS) {
         res.json({ success: false, message: messages.maxHints });
         return;
+    }
+
+    if (hint.length > MAX_HINT_LENGTH || hint.indexOf(' ') !== -1) {
+        res.json({ success: false, message: messages.hintInvalid });
     }
 
     if (username !== game.passwordHolder) {

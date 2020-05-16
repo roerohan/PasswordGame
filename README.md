@@ -111,6 +111,7 @@ Frontend Repo: https://github.com/roerohan/Password
     success: boolean,
     message: {
         currentRound: number,
+        rounds: number,
         passwordHolder: string,
         passwordLength: number,
         previousPassword: string,
