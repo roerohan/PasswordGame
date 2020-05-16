@@ -91,6 +91,7 @@ export async function onAttempt(
 
     io.of(namespace).in(roomId).emit('correct', {
         players: newGame.players,
+        solvedBy: newGame.solvedBy,
     });
 
     return true;
