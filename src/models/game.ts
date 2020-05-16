@@ -14,7 +14,7 @@ export default new mongoose.Schema({
     rounds: {
         type: Number,
         required: true,
-        default: 0,
+        default: 3,
     },
     currentRound: {
         type: Number,
