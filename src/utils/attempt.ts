@@ -10,9 +10,14 @@ export default function attempt(game: GameInterface, username: string, password:
         return { modified: false, message: messages.timeOver };
     }
 
+    if (password.includes(game.password) && password !== game.password) {
+        return { modified: false, message: messages.serverError };
+    }
+
     if (password !== game.password) {
         return { modified: false, message: messages.incorrect };
     }
+
 
     if (username === game.passwordHolder) {
         return { modified: false, message: messages.serverError };
