@@ -7,6 +7,8 @@ export default {
     noPlayers: 'noPlayers',
     incorrect: 'incorrect',
     correct: 'correct',
+    maxHints: 'maxHints',
+    hintInvalid: 'hintInvalid',
     roomCreated: 'roomCreated',
     playerAdded: 'playerAdded',
     userNotFound: 'userNotFound',

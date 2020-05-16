@@ -104,42 +104,19 @@ Frontend Repo: https://github.com/roerohan/Password
 
 - `POST /game/next - roomId, username`
     * Generates a new password in the backend for the room, returns the new passwordHolder and the length of the new password.
+    * `currentPassword` is sent only when the `username` is the same as the `passwordHolder`.
     * Returns a JSON of the following format:
 ```typescript
 {
     success: boolean,
     message: {
         currentRound: number,
+        rounds: number,
         passwordHolder: string,
         passwordLength: number,
         previousPassword: string,
+        currentPassword: string,
         roundEnd: number,
-        players: [
-            {
-                username: string,
-                points: number,
-            },
-            {
-                username: string,
-                points: number,
-            },
-        ],
-    },
-}
-```
-
-- `POST /game/attempt - roomId, username, password`
-    * Matches the requested `password` with the current password for the room `roomId`.
-    * If they don't match, returns `{ success: true, message: incorrect }`.
-    * Otherwise, adds user to list of solvers for the current password and awards the user with points.
-    * Returns a JSON of the format:
-```typescript
-{
-    success: boolean,
-    message: {
-        passwordHolder: string,
-        passwordLength: number,
-        solvedBy: string[],
         players: [
             {
                 username: string,
@@ -189,3 +166,11 @@ Frontend Repo: https://github.com/roerohan/Password
     },
 }
 ```
+
+# Socket Events
+
+- join
+- message
+- start
+- hint
+- disconnect

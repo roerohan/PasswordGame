@@ -2,37 +2,48 @@ import mongoose from 'mongoose';
 import playerSchema, { PlayerInterface } from './player';
 
 export default new mongoose.Schema({
-    roomId: {
-        type: String,
-        required: true,
-        index: true,
-    },
     players: {
         type: [playerSchema],
         required: true,
-    },
-    access: {
-        type: String,
-        enum: ['public', 'private'],
-        required: true,
-    },
-    rounds: {
-        type: Number,
-        required: true,
-        default: 0,
-    },
-    currentRound: {
-        type: Number,
-        required: true,
-        default: 1,
     },
     hasStarted: {
         type: Boolean,
         required: true,
         default: false,
     },
-    passwordHolder: String,
-    password: String,
+    rounds: {
+        type: Number,
+        required: true,
+        default: 3,
+    },
+    currentRound: {
+        type: Number,
+        required: true,
+        default: 1,
+    },
+    roomId: {
+        type: String,
+        required: true,
+        index: true,
+    },
+    access: {
+        type: String,
+        enum: ['public', 'private'],
+        required: true,
+        default: 'public',
+    },
+    passwordHolder: {
+        type: String,
+        default: '',
+    },
+    password: {
+        type: String,
+        default: '',
+    },
+    creator: {
+        type: String,
+        required: true,
+    },
     usedPasswords: {
         type: [String],
         required: true,
@@ -41,9 +52,9 @@ export default new mongoose.Schema({
         type: [String],
         default: [],
     },
-    creator: {
-        type: String,
-        required: true,
+    hints: {
+        type: [String],
+        default: [],
     },
     time:
     {
@@ -59,7 +70,6 @@ export default new mongoose.Schema({
         }),
         default: { start: new Date().getTime(), end: new Date().getTime() },
     },
-    hints: [String],
 });
 
 export interface GameInterface extends mongoose.Document {

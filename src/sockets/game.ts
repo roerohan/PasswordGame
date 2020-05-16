@@ -2,6 +2,8 @@ import socketio from 'socket.io';
 
 import { Game } from '../models/models';
 import { PlayerInterface } from '../models/player';
+import attempt from '../utils/attempt';
+import messages from '../utils/messages';
 
 export async function onStart(
     data: { roomId: string },
@@ -43,21 +45,57 @@ export function onJoin(
 }
 
 export async function onHint(
-    data: { roomId: string, username: string },
+    data: { roomId: string, username: string, hints: string[], passwordHolder: string },
     io: socketio.Server,
     namespace: string,
 ) {
-    const { roomId, username } = data;
+    const {
+        roomId, username, hints, passwordHolder,
+    } = data;
 
     if (!roomId || !username) return;
-
-    const { hints, passwordHolder } = await Game.findOne({ roomId });
 
     if (username !== passwordHolder) return;
 
     io.of(namespace).in(roomId).emit('hint', { hints, passwordHolder });
 }
 
+export async function onAttempt(
+    data: { roomId: string, username: string, message: string },
+    io: socketio.Server,
+    namespace: string,
+) {
+    const { roomId, username, message } = data;
+
+    if (!message || !username || !roomId) return false;
+
+    const game = await Game.findOne({ roomId });
+
+    if (!game) return false;
+
+    const { modified, message: reply, newGame } = attempt(game, username, message);
+
+    if (modified) await newGame.save();
+
+    if (reply === messages.serverError || reply === messages.alreadySolved) return true;
+
+    if (reply !== messages.correct) {
+        return false;
+    }
+
+    io.of(namespace).in(roomId).emit('message', {
+        username,
+        message: reply,
+        time: new Date(),
+    });
+
+    io.of(namespace).in(roomId).emit('correct', {
+        players: newGame.players,
+        solvedBy: newGame.solvedBy,
+    });
+
+    return true;
+}
 
 export async function onDisconnect(
     data: { roomId: string, username: string },

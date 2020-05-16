@@ -12,6 +12,7 @@ import {
     onJoin as joinGame,
     onDisconnect as disconnectGame,
     onHint,
+    onAttempt,
 } from './game';
 
 export default function socketHandler(io: socketio.Server) {
@@ -26,6 +27,7 @@ export default function socketHandler(io: socketio.Server) {
         });
 
         socket.on('message', async (data) => {
+            if (await onAttempt(data, io, namespace)) return;
             await onMessage(socket, data, io, namespace);
         });
 
