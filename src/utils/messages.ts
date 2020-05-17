@@ -13,6 +13,7 @@ export default {
     playerAdded: 'playerAdded',
     userNotFound: 'userNotFound',
     notEnoughPlayers: 'notEnoughPlayers',
+    versionError: 'versionError',
     notAdmin: 'notAdmin',
     alreadySolved: 'alreadySolved',
     usernameAlreadyExists: 'usernameAlreadyExists',

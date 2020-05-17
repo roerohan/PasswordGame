@@ -138,7 +138,14 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
     game.hints = [];
     game.markModified('hints');
 
-    await game.save();
+    try {
+        await game.save();
+    } catch (e) {
+        if (e.name === 'VersionError') {
+            res.json({ success: false, message: messages.versionError });
+            return;
+        }
+    }
 
     const currentPassword = username === game.passwordHolder ? game.password : '';
 
