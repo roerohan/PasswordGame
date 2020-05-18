@@ -214,7 +214,7 @@ router.post('/hint', async (req: express.Request, res: express.Response) => {
     }
 
     if (hint.includes(game.password)) {
-        res.json({ success: false, message: messages.serverError });
+        res.json({ success: false, message: messages.hintInvalid });
         return;
     }
 
