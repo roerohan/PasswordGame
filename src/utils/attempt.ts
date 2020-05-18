@@ -4,8 +4,10 @@ import messages from './messages';
 const GUESSER_POINTS: number = process.env.GUESSER_POINTS ? Number(process.env.GUESSER_POINTS) : 50;
 const HOLDER_POINTS: number = process.env.HOLDER_POINTS ? Number(process.env.HOLDER_POINTS) : 50;
 
-export default function attempt(game: GameInterface, username: string, password: string) {
+export default function attempt(game: GameInterface, username: string, word: string) {
+    const password = word.toLowerCase();
     const time = new Date().getTime();
+
     if (time > game.time.end) {
         return { modified: false, message: messages.timeOver };
     }

@@ -1,8 +1,9 @@
 import express from 'express';
 
 import { Game } from '../models/models';
-import wordGenerator, { words } from '../utils/wordGenerator';
 import messages from '../utils/messages';
+import words from '../utils/words';
+import wordGenerator from '../utils/wordGenerator';
 import getNextPasswordHolder from '../utils/getNextPasswordHolder';
 
 const router = express.Router();
@@ -120,6 +121,8 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
             password = wordGenerator();
         }
     }
+
+    password = password.toLowerCase();
 
     const previousPassword = game.password || '';
 
