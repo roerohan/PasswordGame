@@ -10,6 +10,7 @@ const router = express.Router();
 
 const MAX_HINTS = process.env.MAX_HINTS ? Number(process.env.MAX_HINTS) : 4;
 const MAX_HINT_LENGTH = process.env.MAX_HINT_LENGTH ? Number(process.env.MAX_HINT_LENGTH) : 25;
+const DURATION = process.env.DURATION ? Number(process.env.DURATION) : 60;
 
 router.post('/start', async (req: express.Request, res: express.Response) => {
     const {
@@ -74,7 +75,10 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
         return;
     }
     if (!game.hasStarted) {
-        res.json({ success: false, message: messages.gameNotStarted });
+        if (game.__v === 0) {
+            res.json({ success: false, message: messages.gameNotStarted });
+        }
+        res.json({ success: false, message: messages.gameEnded });
         return;
     }
 
@@ -110,6 +114,27 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
     game.currentRound = currentRound;
 
     if (game.currentRound > game.rounds) {
+        game.hasStarted = false;
+        game.rounds = 3;
+        game.currentRound = 1;
+        game.password = '';
+        game.passwordHolder = '';
+        game.usedPasswords = [];
+        game.time.start = new Date().getTime();
+        game.time.end = new Date().getTime();
+        game.markModified('usedPasswords');
+        game.solvedBy = [];
+        game.markModified('solvedBy');
+        game.hints = [];
+        game.markModified('hints');
+        try {
+            await game.save();
+        } catch (e) {
+            if (e.name === 'VersionError') {
+                res.json({ success: false, message: messages.versionError });
+                return;
+            }
+        }
         res.json({ success: false, message: messages.gameEnded });
         return;
     }
@@ -128,7 +153,6 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
 
     const date: Date = new Date();
     const time = date.getTime();
-    const DURATION = parseInt(process.env.DURATION, 10) || 60;
 
     game.time.start = time;
     game.time.end = time + (DURATION * 1000);

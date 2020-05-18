@@ -1,8 +1,10 @@
 import { GameInterface } from '../models/game';
 import messages from './messages';
 
-const GUESSER_POINTS: number = process.env.GUESSER_POINTS ? Number(process.env.GUESSER_POINTS) : 50;
-const HOLDER_POINTS: number = process.env.HOLDER_POINTS ? Number(process.env.HOLDER_POINTS) : 50;
+const GUESSER_POINTS: number = process.env.GUESSER_POINTS
+    ? Number(process.env.GUESSER_POINTS) : 150;
+const HOLDER_POINTS: number = process.env.HOLDER_POINTS
+    ? Number(process.env.HOLDER_POINTS) : 50;
 
 export default function attempt(game: GameInterface, username: string, word: string) {
     const password = word.toLowerCase();
@@ -35,15 +37,18 @@ export default function attempt(game: GameInterface, username: string, word: str
     newGame.markModified('solvedBy');
 
     const noOfHints = game.hints.length === 0 ? 1 : game.hints.length;
-
+    const noOfPlayers = game.players.length - 1;
     const timeDiff = game.time.end - time;
-    const factor = (Math.sqrt(timeDiff / 10000)) / noOfHints;
+
+    const holderFactor = ((timeDiff / 1000) ** 3) / (noOfHints * noOfPlayers * 1000);
+    const guesserFactor = ((timeDiff / 10000) ** 2) / (noOfHints * 25);
+
     newGame.players = newGame.players.map((p) => {
         const play = p;
         if (play.username === username) {
-            play.points += Math.floor(GUESSER_POINTS * factor);
+            play.points += GUESSER_POINTS + Math.floor(guesserFactor);
         } else if (play.username === newGame.passwordHolder) {
-            play.points += Math.floor(HOLDER_POINTS * ((Math.PI ** 2 * factor) / 10));
+            play.points += HOLDER_POINTS + Math.floor(holderFactor);
         }
         return play;
     });
