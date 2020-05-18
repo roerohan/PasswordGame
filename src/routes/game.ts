@@ -205,6 +205,7 @@ router.post('/hint', async (req: express.Request, res: express.Response) => {
 
     if (hint.length > MAX_HINT_LENGTH || hint.indexOf(' ') !== -1) {
         res.json({ success: false, message: messages.hintInvalid });
+        return;
     }
 
     if (username !== game.passwordHolder) {
