@@ -114,6 +114,11 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
     game.currentRound = currentRound;
 
     if (game.currentRound > game.rounds) {
+        game.players = game.players.map((player) => {
+            const p = player;
+            p.points = 0;
+            return p;
+        });
         game.hasStarted = false;
         game.rounds = 3;
         game.currentRound = 1;
