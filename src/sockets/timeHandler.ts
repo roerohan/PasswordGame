@@ -60,8 +60,6 @@ export default async function timeHandler(
 
     password = password.toLowerCase();
 
-    // const previousPassword = game.password || '';
-
     const date: Date = new Date();
     const time = date.getTime();
 
