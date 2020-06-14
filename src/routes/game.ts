@@ -2,15 +2,11 @@ import express from 'express';
 
 import { Game } from '../models/models';
 import messages from '../utils/messages';
-import words from '../utils/words';
-import wordGenerator from '../utils/wordGenerator';
-import getNextPasswordHolder from '../utils/getNextPasswordHolder';
 
 const router = express.Router();
 
 const MAX_HINTS = process.env.MAX_HINTS ? Number(process.env.MAX_HINTS) : 4;
 const MAX_HINT_LENGTH = process.env.MAX_HINT_LENGTH ? Number(process.env.MAX_HINT_LENGTH) : 25;
-const DURATION = process.env.DURATION ? Number(process.env.DURATION) : 60;
 
 router.post('/start', async (req: express.Request, res: express.Response) => {
     const {
@@ -86,99 +82,7 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
         res.json({ success: false, message: messages.userNotFound });
         return;
     }
-    if (game.solvedBy.length !== (game.players.length - 1)
-        && new Date().getTime() < game.time.end) {
-        const previousPassword = game.usedPasswords.length > 1 ? game.usedPasswords.slice(-2)[0] : '';
-        const currentPassword = username === game.passwordHolder ? game.password : '';
-
-        res.json({
-            success: true,
-            message: {
-                players: game.players,
-                currentRound: game.currentRound,
-                rounds: game.rounds,
-                passwordHolder: game.passwordHolder,
-                passwordLength: game.password.length,
-                previousPassword,
-                currentPassword,
-                hints: game.hints,
-                roundEnd: game.time.end,
-            },
-        });
-        return;
-    }
-
-    const { passwordHolder } = game;
-
-    const { nextPasswordHolder, currentRound } = getNextPasswordHolder(passwordHolder, game);
-    game.currentRound = currentRound;
-
-    if (game.currentRound > game.rounds) {
-        game.players = game.players.map((player) => {
-            const p = player;
-            p.points = 0;
-            return p;
-        });
-        game.hasStarted = false;
-        game.rounds = 3;
-        game.currentRound = 1;
-        game.password = '';
-        game.passwordHolder = '';
-        game.usedPasswords = [];
-        game.time.start = new Date().getTime();
-        game.time.end = new Date().getTime();
-        game.markModified('usedPasswords');
-        game.solvedBy = [];
-        game.markModified('solvedBy');
-        game.hints = [];
-        game.markModified('hints');
-        try {
-            await game.save();
-        } catch (e) {
-            if (e.name === 'VersionError') {
-                res.json({ success: false, message: messages.versionError });
-                return;
-            }
-        }
-        res.json({ success: false, message: messages.gameEnded });
-        return;
-    }
-
-    let password = wordGenerator();
-
-    if (words.length > game.usedPasswords.length) {
-        while (game.usedPasswords.includes(password)) {
-            password = wordGenerator();
-        }
-    }
-
-    password = password.toLowerCase();
-
-    const previousPassword = game.password || '';
-
-    const date: Date = new Date();
-    const time = date.getTime();
-
-    game.time.start = time;
-    game.time.end = time + (DURATION * 1000);
-    game.password = password;
-    game.passwordHolder = nextPasswordHolder;
-    game.usedPasswords.push(password);
-    game.markModified('usedPasswords');
-    game.solvedBy = [];
-    game.markModified('solvedBy');
-    game.hints = [];
-    game.markModified('hints');
-
-    try {
-        await game.save();
-    } catch (e) {
-        if (e.name === 'VersionError') {
-            res.json({ success: false, message: messages.versionError });
-            return;
-        }
-    }
-
+    const previousPassword = game.usedPasswords.length > 1 ? game.usedPasswords.slice(-2)[0] : '';
     const currentPassword = username === game.passwordHolder ? game.password : '';
 
     res.json({
@@ -187,8 +91,8 @@ router.post('/next', async (req: express.Request, res: express.Response) => {
             players: game.players,
             currentRound: game.currentRound,
             rounds: game.rounds,
-            passwordHolder: nextPasswordHolder,
-            passwordLength: password.length,
+            passwordHolder: game.passwordHolder,
+            passwordLength: game.password.length,
             previousPassword,
             currentPassword,
             hints: game.hints,
