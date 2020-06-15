@@ -1,6 +1,10 @@
 class LiveGames {
     private games: { [roomId: string]: { timeout: NodeJS.Timeout } };
 
+    constructor() {
+        this.games = {};
+    }
+
     getGame(roomId: string) {
         return this.games[roomId];
     }

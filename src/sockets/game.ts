@@ -4,6 +4,7 @@ import { Game } from '../models/models';
 import { PlayerInterface } from '../models/player';
 import attempt from '../utils/attempt';
 import messages from '../utils/messages';
+import timeHandler from './timeHandler';
 
 export async function onStart(
     data: { roomId: string },
@@ -21,6 +22,8 @@ export async function onStart(
     if (!game.hasStarted) {
         return;
     }
+
+    timeHandler(data, io, namespace);
 
     io.of(namespace).in(roomId).emit('start', {
         hasStarted: true,
