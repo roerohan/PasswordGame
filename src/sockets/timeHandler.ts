@@ -3,7 +3,7 @@ import socketio from 'socket.io';
 import words from '../utils/words';
 import { Game } from '../models/models';
 import wordGenerator from '../utils/wordGenerator';
-import { getLiveGames, setLiveGames } from '../utils/liveGames';
+import liveGames from '../utils/liveGames';
 import getNextPasswordHolder from '../utils/getNextPasswordHolder';
 
 const DURATION = process.env.DURATION ? Number(process.env.DURATION) : 60;
@@ -78,10 +78,7 @@ export default async function timeHandler(
 
     io.of(namespace).in(roomId).emit('next');
 
-    const liveGames = getLiveGames();
-    liveGames[roomId].timeout = setTimeout(() => {
+    liveGames.setGame(roomId, setTimeout(() => {
         timeHandler({ roomId }, io, namespace);
-    }, DURATION * 1000);
-
-    setLiveGames(liveGames);
+    }, DURATION * 1000));
 }
